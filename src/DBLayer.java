@@ -18,7 +18,7 @@ public class DBLayer {
         URI = "jdbc:mysql://localhost/mypls?autoReconnect=true&useSSL=false&useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC";
         DRIVER = "com.mysql.cj.jdbc.Driver";
         USER = "root";
-        PASSWORD = "AyyLmao12";
+        PASSWORD = "YOUR_PASSWORD_HERE";
     }
 
     /**

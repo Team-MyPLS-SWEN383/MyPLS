@@ -32,7 +32,7 @@ ENGINE = InnoDB;
 DROP TABLE IF EXISTS `MyPLS`.`Class` ;
 
 CREATE TABLE IF NOT EXISTS `MyPLS`.`Class` (
-  `idClass` INT NOT NULL,
+  `idClass` INT NOT NULL AUTO_INCREMENT,
   `class_name` VARCHAR(45) NOT NULL,
   PRIMARY KEY (`idClass`))
 ENGINE = InnoDB;
@@ -44,7 +44,7 @@ ENGINE = InnoDB;
 DROP TABLE IF EXISTS `MyPLS`.`Lecture` ;
 
 CREATE TABLE IF NOT EXISTS `MyPLS`.`Lecture` (
-  `idLecture` INT NOT NULL,
+  `idLecture` INT NOT NULL AUTO_INCREMENT,
   `title` VARCHAR(45) NOT NULL,
   `content` VARCHAR(500) NOT NULL,
   `Class_idClass` INT NOT NULL,
@@ -64,7 +64,7 @@ ENGINE = InnoDB;
 DROP TABLE IF EXISTS `MyPLS`.`User` ;
 
 CREATE TABLE IF NOT EXISTS `MyPLS`.`User` (
-  `idUser` INT NOT NULL,
+  `idUser` INT NOT NULL AUTO_INCREMENT,
   `username` VARCHAR(45) NOT NULL,
   `password` VARCHAR(45) NOT NULL,
   `Roles_idRoles` INT NOT NULL,
@@ -84,22 +84,22 @@ ENGINE = InnoDB;
 DROP TABLE IF EXISTS `MyPLS`.`Grades` ;
 
 CREATE TABLE IF NOT EXISTS `MyPLS`.`Grades` (
-  `idGrades` INT NOT NULL,
-  `User_idUser` INT NOT NULL,
+  `idGrades` INT NOT NULL AUTO_INCREMENT,
   `Class_idClass` INT NOT NULL,
+  `User_idUser` INT NOT NULL,
   PRIMARY KEY (`idGrades`),
-  INDEX `fk_Grades_User1_idx` (`User_idUser` ASC),
   INDEX `fk_Grades_Class1_idx` (`Class_idClass` ASC),
-  CONSTRAINT `fk_Grades_User1`
-    FOREIGN KEY (`User_idUser`)
-    REFERENCES `MyPLS`.`User` (`idUser`)
-    ON DELETE NO ACTION
-    ON UPDATE CASCADE,
+  INDEX `fk_Grades_User1_idx` (`User_idUser` ASC),
   CONSTRAINT `fk_Grades_Class1`
     FOREIGN KEY (`Class_idClass`)
     REFERENCES `MyPLS`.`Class` (`idClass`)
     ON DELETE NO ACTION
-    ON UPDATE CASCADE)
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_Grades_User1`
+    FOREIGN KEY (`User_idUser`)
+    REFERENCES `MyPLS`.`User` (`idUser`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
@@ -109,7 +109,7 @@ ENGINE = InnoDB;
 DROP TABLE IF EXISTS `MyPLS`.`Ratings` ;
 
 CREATE TABLE IF NOT EXISTS `MyPLS`.`Ratings` (
-  `idRatings` INT NOT NULL,
+  `idRatings` INT NOT NULL AUTO_INCREMENT,
   `User_idUser` INT NOT NULL,
   `User_Roles_idRoles` INT NOT NULL,
   `ratingNumber` INT NOT NULL,
@@ -129,7 +129,7 @@ ENGINE = InnoDB;
 DROP TABLE IF EXISTS `MyPLS`.`Groups` ;
 
 CREATE TABLE IF NOT EXISTS `MyPLS`.`Groups` (
-  `idGroups` INT NOT NULL,
+  `idGroups` INT NOT NULL AUTO_INCREMENT,
   `Class_idClass` INT NOT NULL,
   `Name` VARCHAR(45) NOT NULL,
   `Class_idClass1` INT NOT NULL,
@@ -149,7 +149,7 @@ ENGINE = InnoDB;
 DROP TABLE IF EXISTS `MyPLS`.`Discussions` ;
 
 CREATE TABLE IF NOT EXISTS `MyPLS`.`Discussions` (
-  `idDiscussions` INT NOT NULL,
+  `idDiscussions` INT NOT NULL AUTO_INCREMENT,
   `Class_idClass` INT NOT NULL,
   PRIMARY KEY (`idDiscussions`, `Class_idClass`),
   INDEX `fk_Discussions_Class1_idx` (`Class_idClass` ASC),
@@ -167,7 +167,7 @@ ENGINE = InnoDB;
 DROP TABLE IF EXISTS `MyPLS`.`Posts` ;
 
 CREATE TABLE IF NOT EXISTS `MyPLS`.`Posts` (
-  `idPosts` INT NOT NULL,
+  `idPosts` INT NOT NULL AUTO_INCREMENT,
   `Discussions_idDiscussions` INT NOT NULL,
   `title` VARCHAR(45) NOT NULL,
   `content` VARCHAR(500) NOT NULL,
@@ -194,7 +194,7 @@ ENGINE = InnoDB;
 DROP TABLE IF EXISTS `MyPLS`.`Classlist` ;
 
 CREATE TABLE IF NOT EXISTS `MyPLS`.`Classlist` (
-  `idClasslist` INT NOT NULL,
+  `idClasslist` INT NOT NULL AUTO_INCREMENT,
   `User_idUser` INT NOT NULL,
   `Class_idClass` INT NOT NULL,
   PRIMARY KEY (`idClasslist`),

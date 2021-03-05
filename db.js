@@ -8,18 +8,11 @@ const pool = mysql.createPool({
     database: "mypls"
 });
 
-// function endPool(){
-//     pool.end(function(err){
-//         if(err) throw err;
-//         console.log("Disconencted");
-//     });
-// }
-
 function displayRole(username){
-    let sql = "SELECT role_name FROM roles WHERE idRoles IN (SELECT Roles_idRoles FROM user WHERE username = '"+username+"')";    
+    let sql = "SELECT role_name FROM roles WHERE idRoles IN (SELECT Roles_idRoles FROM user WHERE username = ?)";    
     pool.getConnection(function(err,connection){
         if(err) throw err;
-        connection.query(sql,function(err,result){
+        connection.query(sql,[username],function(err,result){
             let data = JSON.stringify(result);
             console.log(result[0]['role_name']);
             connection.release();
@@ -31,10 +24,10 @@ function displayRole(username){
 function checkNewUser(username){
     // Check if username already exists in database. If so, return an error
     // Else, create new user
-    let sql = "SELECT username FROM user WHERE username='"+username+"'";
+    let sql = "SELECT username FROM user WHERE username= ?";
     pool.getConnection(function(err,connection){
         if(err) throw err;
-        connection.query(sql,function(err,result){
+        connection.query(sql,[username],function(err,result){
             let data = JSON.stringify(result);
             console.log(result);
             connection.release();
@@ -47,7 +40,14 @@ function checkNewUser(username){
 function addUser(username, password, roleId){
     // Insert new user into user table with their provided information
     // this is called after checking if they exist already
-    let sql = "INSERT INTO user (username,password,Roles_idRoles) VALUES('"+username+"','"+password+"',"+roleId+")";
+    let sql = "INSERT INTO user (username,password,Roles_idRoles) VALUES(?,?,?)";
+    pool.getConnection(function(err,connection){
+        if(err) throw err;
+        connection.query(sql,[username,password,roleId],function(err,result){
+            connection.release();
+            if (err) throw err;
+        })
+    })
 }
 
 module.exports = {

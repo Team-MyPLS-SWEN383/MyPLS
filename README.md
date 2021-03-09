@@ -14,6 +14,7 @@ MyPLS is a course shell that allows both professors and students to access their
 * NodeJS
 
 ## Installation Instructions
-* Clone repository to mcahine
-* run npm i to install any dependencies
-* run index.js using node to start program
+* Clone repository to machine
+* Use npm i to install any dependencies
+* Run the MySQL script to create database
+* Run index.js using node to start program

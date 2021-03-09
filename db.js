@@ -28,10 +28,18 @@ function checkNewUser(username){
     pool.getConnection(function(err,connection){
         if(err) throw err;
         connection.query(sql,[username],function(err,result){
-            let data = JSON.stringify(result);
-            console.log(result);
-            connection.release();
-            if(err) throw err;
+            if(result.length > 0){
+                connection.release();
+                if(err) throw err;
+                return true;
+                
+            }
+            else{
+                connection.release();
+                if(err) throw err;
+                return false;
+            }
+            
         })
     })
     
@@ -41,13 +49,19 @@ function addUser(username, password, roleId){
     // Insert new user into user table with their provided information
     // this is called after checking if they exist already
     let sql = "INSERT INTO user (username,password,Roles_idRoles) VALUES(?,?,?)";
-    pool.getConnection(function(err,connection){
-        if(err) throw err;
-        connection.query(sql,[username,password,roleId],function(err,result){
-            connection.release();
-            if (err) throw err;
-        })
-    })
+    let check = checkNewUser(username);
+    console.log(check);
+    if(check = false){
+        pool.getConnection(function(err,connection){
+            connection.query(sql,[username,password,roleId],function(err,result){
+                if (err) throw err;
+                console.log("inserted new user");
+                connection.release();
+        });
+    })}
+    else{
+        console.log("user already exists");
+    }
 }
 
 module.exports = {

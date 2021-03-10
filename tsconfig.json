@@ -1,0 +1,8 @@
+{
+  "compilerOptions": {
+    "lib": ["DOM", "ES2017"],
+    "target": "ES6",
+    "downlevelIteration": true,
+    "moduleResolution": "node"
+  }
+}

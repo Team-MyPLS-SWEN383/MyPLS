@@ -18,8 +18,7 @@ MyPLS is a course shell that allows both professors and students to access their
 * Clone repository to machine
 * Use `npm i` to install any dependencies
 * Run the MySQL script to create database
-* type `npm run server` to start the server (database)
-* type `npm run client` to start the client (website)
+* type `npm run start` to start things
 * navigate to http://localhost:5000 to view it
 * to modify things, modify the code in `src/client` or `src/server` (whichever you're working on) and type `npm run build` when you're done. 
 

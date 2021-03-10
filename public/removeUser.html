@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>
+ My PLS Sign Up Page
+</title>
+<link rel="stylesheet" type="text/css" href="css/signupstyle.css"> 
+<body>
+<!-- "this" = the form object -->
+<!-- "return false;" prevents it from refreshing or advancing to another page -->
+<form onsubmit="handler(this); return false;" style="border:1px solid #ccc">
+  <div class="container">
+    <h1>Sign Up</h1>
+    <p>Please fill in this form to delete an account.</p>
+    <hr>
+
+    <label for="username"><b>User Name</b></label>
+    <input type="text" placeholder="Enter User Name to Delete" name="username" required>
+
+    <div class="clearfix">
+      <a href="index.html"><button type="button" class="cancelbtn">Cancel</button></a>
+      <button type="submit" class="signupbtn">remove</button>
+    </div>
+  </div>
+</form>
+
+<script>
+  // this is how you go about using the DELETE method with form data
+  // this is how it has to be done because method="DELETE" doesn't work in HTML
+  const handler = async (form) => {
+    await fetch("/users/", {
+      method: "DELETE",
+      body: JSON.stringify({
+        ...Object.fromEntries((new FormData(form)).entries())
+      }),
+      headers: {
+        "Content-Type": "application/json"
+      },
+    });
+  }
+</script>
+</html> 

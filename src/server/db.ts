@@ -53,6 +53,14 @@ export default class DatabaseHandler {
         return result.length > 0;
     }
 
+    async getUsers() {
+        const query = "SELECT * FROM user";
+        const connection = await this.pool.getConnection();
+        const [result] = await connection.query(query);
+        connection.release();
+        return result;
+    }
+
     /**
      * Inserts a new user into the user table with their provided information
      * called after checking if they already exist
@@ -65,10 +73,30 @@ export default class DatabaseHandler {
             const query = "INSERT INTO user (username, password, Roles_idRoles) VALUES(?, ?, ?)";
             const connection = await this.pool.getConnection();
             const [result] = await connection.query(query, [username, password, roleId]);
-            console.log("inserted new user");
+            console.log(`inserted new user: ${username}`);
             connection.release();
+            return true;
         } else {
             console.log("user already exists!");
+            return false;
+        }
+    }
+
+    /**
+     * Deletes a user from the users table given their username
+     * @param username 
+     */
+    async deleteUser(username: string) {
+        if (await this.checkNewUser(username)) {
+            const query = "DELETE FROM user WHERE username = ?";
+            const connection = await this.pool.getConnection();
+            await connection.query(query, [username]);
+            console.log(`deleted user: ${username}`)
+            connection.release();
+            return true;
+        } else {
+            console.log(`user ${username} doesn't exist!`);
+            return false;
         }
     }
 }

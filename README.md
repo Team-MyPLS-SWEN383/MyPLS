@@ -13,6 +13,8 @@ MyPLS is a course shell that allows both professors and students to access their
 * MySQL
 * NodeJS
 * Typescript
+* HTML
+* CSS
 
 ## Installation Instructions
 * Clone repository to machine

@@ -100,9 +100,86 @@ export default class DatabaseHandler {
         }
     }
 
+    async checkNewCourse(coursename: string) {
+        const query = "SELECT coursename FROM courses WHERE coursename = ?";
+        const connection = await this.pool.getConnection();
+        const [result] = await connection.query(query, [coursename]) as any[];
+        connection.release();
+        return result.length > 0;
+    }
+
     /**
-     * Adds a course from the courses table given username
-     * @param username 
+     * Adds a course from the courses table given coursename and instructor
+     * @param coursename 
+     * @param instructor
      */
+
+     async addCourse(coursename: string, instructor: string) {
+        if (!(await this.checkNewCourse(coursename))) {
+            const query = "INSERT INTO courses (coursename, instructor) VALUES(?, ?)";
+            const connection = await this.pool.getConnection();
+            const [result] = await connection.query(query, [coursename, instructor]);
+            console.log(`inserted new course: ${coursename}`);
+            connection.release();
+            return true;
+        } else {
+            console.log("Course already exists!");
+            return false;
+        }
+    }
+
+    /**
+     * Deletes a course from the courses table given coursename
+     * @param coursename 
+     * @param instructor
+     */
+
+    async deleteCourse(coursename: string) {
+        if (await this.checkNewCourse(coursename)) {
+            const query = "DELETE FROM courses WHERE coursename = ?";
+            const connection = await this.pool.getConnection();
+            await connection.query(query, [coursename]);
+            console.log(`Deleted course: ${coursename}`)
+            connection.release();
+            return true;
+        } else {
+            console.log(`Course ${coursename} doesn't exist!`);
+            return false;
+        }
+    }
+
+    /**
+     * Adds professor to existing course
+     * @param coursename 
+     * @param instructor
+     */
+
+    async updateCourse(coursename: string, instructor: string) {
+        if (await this.checkNewCourse(coursename)) {
+            const query = "UPDATE courses SET instructor = ? WHERE coursename = ?";
+            const connection = await this.pool.getConnection();
+            const [result] = await connection.query(query, [instructor, coursename]);
+            console.log(`Updated course: ${coursename}`);
+            connection.release();
+            return true;
+        } else {
+            console.log(`Course ${coursename} doesn't exist!`);
+            return false;
+        }
+    }
+
+    /**
+     * Searches for discussion given parameter
+     * @param keywords 
+     */
+
+    async searchDiscussion(keywords: string) {
+        const query = "SELECT * FROM discussions WHERE discussiontitle LIKE '?'";
+        const connection = await this.pool.getConnection();
+        const [result] = await connection.query(query, [keywords]) as any[];
+        connection.release();
+        return result.length > 0;
+    }
+
 }
 

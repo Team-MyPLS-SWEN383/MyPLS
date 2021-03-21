@@ -21,8 +21,8 @@ export default class DatabaseHandler {
         this.pool = mysql.createPool({
             connectionLimit: 25,
             host: 'localhost',
-            user: 'root',
-            password: 'pwrit2020', // 'YOUR_PASSWORD_HERE',
+            user: 'mypls',
+            password: 'mypls123', // 'YOUR_PASSWORD_HERE',
             database: 'mypls'
         });
     }
@@ -99,5 +99,10 @@ export default class DatabaseHandler {
             return false;
         }
     }
+
+    /**
+     * Adds a course from the courses table given username
+     * @param username 
+     */
 }
 

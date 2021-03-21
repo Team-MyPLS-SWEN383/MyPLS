@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Layer</title>
+    <link rel="stylesheet" href="Admin%20Layer_files/adminstyle.css">
+    <script src="Admin%20Layer_files/admin.js"></script>
+</head>
+<body data-new-gr-c-s-check-loaded="8.871.0" data-gr-ext-installed="">
+    <!-- This is the header section -->
+    <div class="nav">
+    <h1> Welcome to Admin Layer </h1>
+    </div>
+    <!-- End Of Header Section -->
+    <!-- This is the section that seperate each section -->
+    <div id="myBtnContainer">
+  <button class="btn active" onclick="filterSelection('all')"> Show all</button>
+  <button class="btn" onclick="filterSelection('course')"> course</button>
+  <button class="btn" onclick="filterSelection('professor')"> professors</button>
+  <button class="btn" onclick="filterSelection('student')"> students</button>
+  <button class="btn" onclick="filterSelection('discussions')"> discussions</button>
+
+</div>
+
+<!-- The filterable elements. Note that some have multiple class names (this can be used if they belong to multiple categories) -->
+<div class="container">
+
+  <div class="filterDiv course show">
+  <div class="card">
+  <img src="Admin%20Layer_files/course.png" alt="Available Courses" style="width:100%">
+  <div class="container">
+    <h4><b>ISTE 140</b></h4>
+  </div>
+</div>
+<input type="checkbox">
+</div>
+
+  <div class="filterDiv discussions">
+  <div class="card">
+  <img src="Admin%20Layer_files/discussion.png" alt="Discussion Group" style="width:100%">
+  <div class="container">
+    <h4><b>History</b></h4>
+  </div>
+</div>
+<input type="checkbox">
+</div>
+
+  <div class="filterDiv course show">
+  <div class="card">
+  <img src="Admin%20Layer_files/course.png" alt="Available Courses" style="width:100%">
+  <div class="container">
+    <h4><b>ISTE 240</b></h4>
+  </div>
+</div>
+<input type="checkbox">
+</div>
+
+  <div class="filterDiv student">
+  <div class="card">
+  <img src="Admin%20Layer_files/student.png" alt="Registered Students" style="width:100%">
+  <div class="container">
+    <h4><b>Sayed Mobin Sadat</b></h4>
+  </div>
+</div>
+<input type="checkbox">
+</div>
+
+  <div class="filterDiv course show">
+  <div class="card">
+  <img src="Admin%20Layer_files/course.png" alt="Available Courses" style="width:100%">
+  <div class="container">
+    <h4><b>SWEN 383</b></h4>
+  </div>
+</div>
+<input type="checkbox">
+</div>
+
+<div class="filterDiv student">
+  <div class="card">
+  <img src="Admin%20Layer_files/student.png" alt="Registered Students" style="width:100%">
+  <div class="container">
+    <h4><b>Dominick Reba</b></h4>
+  </div>
+</div>
+<input type="checkbox">
+</div>
+
+  <div class="filterDiv professor">
+  <div class="card">
+  <img src="Admin%20Layer_files/instructor.png" alt="Available Instructor" style="width:100%">
+  <div class="container">
+    <h4><b>Bryan French</b></h4>
+  </div>
+</div>
+<input type="checkbox">
+</div>
+
+  <div class="filterDiv professor">
+  <div class="card">
+  <img src="Admin%20Layer_files/instructor.png" alt="Available Instructor" style="width:100%">
+  <div class="container">
+    <h4><b>Jim Ross</b></h4>
+  </div>
+</div>
+<input type="checkbox">
+</div>
+
+<div class="filterDiv discussions">
+  <div class="card">
+  <img src="Admin%20Layer_files/discussion.png" alt="Discussion Group" style="width:100%">
+  <div class="container">
+    <h4><b> US Policy</b></h4>
+  </div>
+</div>
+<input type="checkbox">
+</div>
+
+  <div class="filterDiv professor">
+  <div class="card">
+  <img src="Admin%20Layer_files/instructor.png" alt="Available Instructor" style="width:100%">
+  <div class="container">
+    <h4><b>Edgar Smith</b></h4>
+  </div>
+</div>
+<input type="checkbox">
+</div>
+
+<div class="filterDiv discussions">
+  <div class="card">
+  <img src="Admin%20Layer_files/discussion.png" alt="Discussion Group" style="width:100%">
+  <div class="container">
+    <h4><b>Javascript</b></h4>
+  </div>
+</div>
+<input type="checkbox">
+</div>
+
+<div class="filterDiv discussions">
+  <div class="card">
+  <img src="Admin%20Layer_files/discussion.png" alt="Discussion Group" style="width:100%">
+  <div class="container">
+    <h4><b>Python</b></h4>
+  </div>
+</div>
+<input type="checkbox">
+</div>
+
+  <div class="filterDiv professor">
+  <div class="card">
+  <img src="Admin%20Layer_files/instructor.png" alt="Available Instructor" style="width:100%">
+  <div class="container">
+    <h4><b>Steven Horowitz</b></h4>
+  </div>
+</div>
+<input type="checkbox">
+</div>
+
+<div class="filterDiv student">
+  <div class="card">
+  <img src="Admin%20Layer_files/student.png" alt="Registered Students" style="width:100%">
+  <div class="container">
+    <h4><b>Kenny Scott</b></h4>
+  </div>
+</div>
+<input type="checkbox">
+</div>
+
+<div class="filterDiv student">
+  <div class="card">
+  <img src="Admin%20Layer_files/student.png" alt="Registered Students" style="width:100%">
+  <div class="container">
+    <h4><b>Aidan LeMay</b></h4>
+  </div>
+</div>
+<input type="checkbox">
+</div>
+
+</div>
+<!-- End of seperation section -->
+
+<!-- This is where the add button related tings starts -->
+<div id="myBtnContainer">
+<button onclick="document.getElementById('id01').style.display='block'" style="width:auto; margin: 10px auto 10px auto" class="btn">Add User</button>
+
+<div id="id01" class="modal">
+
+  <form class="modal-content animate" action="/action_page.php" method="post">
+    <div class="imgcontainer">
+      <span onclick="document.getElementById('id01').style.display='none'" class="close" title="Close Modal">×</span>
+      <img src="Admin%20Layer_files/uadd.png" alt="Avatar" class="avatar">
+    </div>
+
+    <div class="container">
+      <label for="fname"><b>First Name</b></label>
+      <input type="text" placeholder="Enter First Name" name="fname" required="">
+    <br>
+    <label for="lname"><b>Last Name</b></label>
+    <input type="text" placeholder="Enter Last Name" name="lname" required="">
+  <br>
+      <label for="uname"><b>Username</b></label>
+      <input type="text" placeholder="Enter Username" name="uname" required="">
+    <br>
+      <label for="psw"><b>Password</b></label>
+      <input type="password" placeholder="Enter Temporary Password" name="psw" required="">
+    <br>
+      <label for="email"><b>Email I.D</b></label>
+      <input type="text" placeholder="Enter Email" name="email" required="">
+    <br>
+    <label for="role"><b>User Role</b></label>
+    <select name="role" id="role" required="">
+    <option value="administrator" class="option01"> Administrator </option>
+    <option value="instructor" class="option01"> Instructor </option>
+    <option value="learner" class="option01" selected="selected"> Learner </option>
+    </select>
+    <p></p>
+    <br>
+    </div>
+    <div class="container" style="text-align: center;">
+      <button type="button" onclick="document.getElementById('id01').style.display='none'" class="cancelbtn btn">Cancel</button>
+      <button type="submit" class="btn" style="margin-left: 5%;background-color: green;">Register</button>
+    </div>
+  </form>
+</div>
+
+
+<!-- This is the end of the Add user Function -->
+
+<!-- This is the Start of Add Course 00000 These are inside a single div to be next to each other-->
+
+<button onclick="document.getElementById('id02').style.display='block'" style="width:auto; margin: 10px auto 10px auto" class="btn">Add Course</button>
+
+<div id="id02" class="modal">
+
+  <form class="modal-content animate" action="/action_page.php" method="post">
+    <div class="imgcontainer">
+      <span onclick="document.getElementById('id02').style.display='none'" class="close" title="Close Modal">×</span>
+      <img src="Admin%20Layer_files/dgadd.png" alt="Avatar" class="avatar">
+    </div>
+
+    <div class="container">
+      <label for="title"><b>Title</b></label>
+      <input type="text" placeholder="Enter Title of the Class Or Discussion" name="title" required="">
+    <br>
+    <label for="role"><b>Title For</b></label>
+    <select name="role" id="role" required="">
+    <option value="discussion" class="option01" selected="selected"> Discussion </option>
+    <option value="course" class="option01"> Course </option>
+    </select>
+    <p></p>
+    <br>
+    </div>
+    <div class="container" style="text-align: center;">
+      <button type="button" onclick="document.getElementById('id02').style.display='none'" class="cancelbtn btn">Cancel</button>
+      <button type="submit" class="btn" style="margin-left: 5%;background-color: green; color: white;">Add Content</button>
+    </div>
+  </form>
+</div>
+<!-- This is the end of the Add course and Discussion Session -->
+
+<!-- This is the section for Modify Content -->
+<button onclick="document.getElementById('id03').style.display='block'" style="width:auto; margin: 10px auto 10px auto" class="btn">Modify Course</button>
+
+<div id="id03" class="modal">
+
+  <form class="modal-content animate" action="/action_page.php" method="post">
+    <div class="imgcontainer">
+      <span onclick="document.getElementById('id03').style.display='none'" class="close" title="Close Modal">×</span>
+      <img src="Admin%20Layer_files/dgadd.png" alt="Avatar" class="avatar">
+    </div>
+
+    <div class="container">
+      <label for="discussionorcourse"><b>Modify Option</b></label>
+      <select name="role" id="role" required="">
+      <option value="discussionorcourse" class="option01" disabled="disabled"> </option>
+      <option value="discussion" class="option01"> Discussion </option>
+      <option value="course" class="option01" selected="selected"> Course </option>
+      </select>
+      <p></p>
+      <br>
+
+      <label for="role"><b>Modify Content</b></label>
+      <select name="role" id="role" required="">
+      <option value="discussionorcourse" class="option01" disabled="disabled"> </option>
+      <option value="discussionorcourse" class="option01"> Content 1 </option>
+      <option value="discussionorcourse" class="option01"> Content 2 </option>
+      <option value="discussionorcourse" class="option01" selected="selected"> Content 3 </option>
+      </select>
+      <p></p>
+      <br>
+      <label for="title"><b>New Title</b></label>
+      <input type="text" placeholder="Enter Title of the Class Or Discussion" name="title" required="">
+    <br>
+    </div>
+    <div class="container" style="text-align: center;">
+      <button type="button" onclick="document.getElementById('id03').style.display='none'" class="cancelbtn btn">Cancel</button>
+      <button type="submit" class="btn" style="margin-left: 5%;background-color: green; color: white;">Modify Content</button>
+    </div>
+  </form>
+</div>
+
+<!-- This is the end of Modify Content -->
+
+<!-- Modify User Information --->
+<button onclick="document.getElementById('id04').style.display='block'" style="width:auto; margin: 10px auto 10px auto" class="btn">Modify User</button>
+
+<div id="id04" class="modal">
+
+  <form class="modal-content animate" action="/action_page.php" method="post">
+    <div class="imgcontainer">
+      <span onclick="document.getElementById('id04').style.display='none'" class="close" title="Close Modal">×</span>
+      <img src="Admin%20Layer_files/uadd.png" alt="Avatar" class="avatar">
+    </div>
+
+    <div class="container">
+      <label for="role"><b>User Role</b></label>
+      <select name="role" id="role" required="">
+      <option value="administrator" class="option01"> Administrator </option>
+      <option value="instructor" class="option01"> Instructor </option>
+      <option value="learner" class="option01" selected="selected"> Learner </option>
+      </select>
+      <br>
+
+      <label for="role"><b>Modify User</b></label>
+      <select name="role" id="role" required="">
+        <option value="userdata" class="option01" disabled="disabled"> </option>
+      <option value="userdata" class="option01"> User 1 Show </option>
+      <option value="userdata" class="option01"> User 2 Show </option>
+      <option value="userdata" class="option01" selected="selected"> User 3 Show </option>
+      </select>
+      <p></p>
+      <br>
+
+      <label for="fname"><b>Modify First Name</b></label>
+      <input type="text" placeholder="Enter First Name" name="fname" required="">
+    <br>
+    <label for="lname"><b>Modify Last Name</b></label>
+    <input type="text" placeholder="Enter Last Name" name="lname" required="">
+  <br>
+      <label for="uname"><b>Modify Username</b></label>
+      <input type="text" placeholder="Enter Username" name="uname" required="">
+    <br>
+      <label for="psw"><b>Modify Password</b></label>
+      <input type="password" placeholder="Enter Temporary Password" name="psw" required="">
+    <br>
+      <label for="email"><b>Modify Email I.D</b></label>
+      <input type="text" placeholder="Enter Email" name="email" required="">
+    <br>
+    <label for="role"><b>Modify User Role</b></label>
+    <select name="role" id="role" required="">
+    <option value="administrator" class="option01"> Administrator </option>
+    <option value="instructor" class="option01" selected="selected"> Instructor </option>
+    <option value="learner" class="option01"> Learner </option>
+    </select>
+    <p></p>
+    <br>
+    </div>
+    <div class="container" style="text-align: center;">
+      <button type="button" onclick="document.getElementById('id04').style.display='none'" class="cancelbtn btn">Cancel</button>
+      <button type="submit" class="btn" style="margin-left: 5%;background-color: green;">Modify User</button>
+    </div>
+  </form>
+</div>
+<!-- End of Modify User Information -->
+
+<!-- This is the section for Delete Button -->
+<button style="width:auto; margin: 10px auto 10px auto" class="btn" onclick="deleteFunction()">Delete</button>
+
+</div>
+
+<!-- This is the end of the delete button -->
+
+
+</body></html>

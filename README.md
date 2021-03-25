@@ -22,7 +22,7 @@ MyPLS is a course shell that allows both professors and students to access their
 * Create a new MySQL User to connect to through the application
 *   `CREATE USER 'mypls'@'localhost' IDENTIFIED BY 'mypls123';`
 *   `GRANT ALL PRIVILEGES ON * . * TO 'mypls'@'localhost';`
-*   `FLUSH PRIVELAGES;`
+*   `FLUSH PRIVILEGES;`
 * Run the MySQL script to create database under the new `mypls` user
 * type `npm run start` to start things
 * navigate to http://localhost:5000 to view it

@@ -109,16 +109,15 @@ export default class DatabaseHandler {
     }
 
     /**
-     * Adds a course from the courses table given coursename and instructor
+     * Adds a course from the courses table given coursename
      * @param coursename 
-     * @param instructor
      */
 
-     async addCourse(coursename: string, instructor: string) {
+    async addCourse(coursename: string) {
         if (!(await this.checkNewCourse(coursename))) {
-            const query = "INSERT INTO courses (coursename, instructor) VALUES(?, ?)";
+            const query = "INSERT INTO courses (coursename) VALUES(?)";
             const connection = await this.pool.getConnection();
-            const [result] = await connection.query(query, [coursename, instructor]);
+            const [result] = await connection.query(query, [coursename]);
             console.log(`inserted new course: ${coursename}`);
             connection.release();
             return true;

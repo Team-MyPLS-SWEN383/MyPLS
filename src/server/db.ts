@@ -153,7 +153,21 @@ export default class DatabaseHandler {
      * @param instructor
      */
 
-    async updateCourse(coursename: string, instructor: string) {
+    async updateCourseName(coursename: string) {
+        if (await this.checkNewCourse(coursename)) {
+            const query = "UPDATE courses SET coursename = ? WHERE coursename = ?";
+            const connection = await this.pool.getConnection();
+            const [result] = await connection.query(query, [coursename, coursename]);
+            console.log(`Updated course: ${coursename}`);
+            connection.release();
+            return true;
+        } else {
+            console.log(`Course ${coursename} doesn't exist!`);
+            return false;
+        }
+    }
+
+    async updateCourseInstructor(coursename: string, instructor: string) {
         if (await this.checkNewCourse(coursename)) {
             const query = "UPDATE courses SET instructor = ? WHERE coursename = ?";
             const connection = await this.pool.getConnection();
@@ -180,5 +194,20 @@ export default class DatabaseHandler {
         return result.length > 0;
     }
 
+    /**
+     * Adds student to discussion
+     * @param ? 
+     */
+
+    /**
+     * Deletes student from discussion
+     * @param ? 
+     */
+
+    /**
+     * Adds admin to group
+     * @param ? 
+     */
+    
 }
 

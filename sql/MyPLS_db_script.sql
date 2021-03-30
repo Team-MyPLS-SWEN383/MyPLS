@@ -53,7 +53,7 @@ CREATE TABLE IF NOT EXISTS `MyPLS`.`Lecture` (
   CONSTRAINT `fk_Lecture_Courses1`
     FOREIGN KEY (`Courses_idCourse`)
     REFERENCES `MyPLS`.`Courses` (`idCourse`)
-    ON DELETE CASCADE
+    ON DELETE NO ACTION
     ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
@@ -111,10 +111,10 @@ DROP TABLE IF EXISTS `MyPLS`.`Ratings` ;
 CREATE TABLE IF NOT EXISTS `MyPLS`.`Ratings` (
   `idRatings` INT NOT NULL AUTO_INCREMENT,
   `User_idUser` INT NOT NULL,
-  `User_Roles_idRoles` INT NOT NULL,
   `ratingNumber` INT NOT NULL,
+  `Comment` VARCHAR(250) NULL,
   PRIMARY KEY (`idRatings`),
-  INDEX `fk_Ratings_User1_idx` (`User_idUser` ASC, `User_Roles_idRoles` ASC),
+  INDEX `fk_Ratings_User1_idx` (`User_idUser` ASC),
   CONSTRAINT `fk_Ratings_User1`
     FOREIGN KEY (`User_idUser`)
     REFERENCES `MyPLS`.`User` (`idUser`)
@@ -124,42 +124,15 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `MyPLS`.`Groups`
+-- Table `MyPLS`.`Group`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `MyPLS`.`Groups` ;
+DROP TABLE IF EXISTS `MyPLS`.`Group` ;
 
-CREATE TABLE IF NOT EXISTS `MyPLS`.`Groups` (
-  `idGroups` INT NOT NULL AUTO_INCREMENT,
-  `Class_idClass` INT NOT NULL,
+CREATE TABLE IF NOT EXISTS `MyPLS`.`Group` (
+  `idGroup` INT NOT NULL AUTO_INCREMENT,
   `Name` VARCHAR(45) NOT NULL,
-  `Courses_idCourse` INT NOT NULL,
-  PRIMARY KEY (`idGroups`, `Class_idClass`),
-  INDEX `fk_Groups_Courses1_idx` (`Courses_idCourse` ASC),
-  CONSTRAINT `fk_Groups_Courses1`
-    FOREIGN KEY (`Courses_idCourse`)
-    REFERENCES `MyPLS`.`Courses` (`idCourse`)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE)
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `MyPLS`.`Posts`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `MyPLS`.`Posts` ;
-
-CREATE TABLE IF NOT EXISTS `MyPLS`.`Posts` (
-  `idPosts` INT NOT NULL AUTO_INCREMENT,
-  `title` VARCHAR(45) NOT NULL,
-  `content` VARCHAR(500) NOT NULL,
-  `User_idUser` INT NOT NULL,
-  PRIMARY KEY (`idPosts`),
-  INDEX `fk_Posts_User1_idx` (`User_idUser` ASC),
-  CONSTRAINT `fk_Posts_User1`
-    FOREIGN KEY (`User_idUser`)
-    REFERENCES `MyPLS`.`User` (`idUser`)
-    ON DELETE NO ACTION
-    ON UPDATE CASCADE)
+  `Description` VARCHAR(45) NULL,
+  PRIMARY KEY (`idGroup`))
 ENGINE = InnoDB;
 
 
@@ -170,20 +143,15 @@ DROP TABLE IF EXISTS `MyPLS`.`Discussions` ;
 
 CREATE TABLE IF NOT EXISTS `MyPLS`.`Discussions` (
   `idDiscussions` INT NOT NULL AUTO_INCREMENT,
-  `Posts_idPosts` INT NOT NULL,
-  `Courses_idCourse` INT NOT NULL,
+  `Discussion_Title` VARCHAR(45) NOT NULL,
+  `Summary` VARCHAR(45) NOT NULL,
+  `Group_idGroup` INT NOT NULL,
   PRIMARY KEY (`idDiscussions`),
-  INDEX `fk_Discussions_Posts1_idx` (`Posts_idPosts` ASC),
-  INDEX `fk_Discussions_Courses1_idx` (`Courses_idCourse` ASC),
-  CONSTRAINT `fk_Discussions_Posts1`
-    FOREIGN KEY (`Posts_idPosts`)
-    REFERENCES `MyPLS`.`Posts` (`idPosts`)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE,
-  CONSTRAINT `fk_Discussions_Courses1`
-    FOREIGN KEY (`Courses_idCourse`)
-    REFERENCES `MyPLS`.`Courses` (`idCourse`)
-    ON DELETE CASCADE
+  INDEX `fk_Discussions_Group1_idx` (`Group_idGroup` ASC),
+  CONSTRAINT `fk_Discussions_Group1`
+    FOREIGN KEY (`Group_idGroup`)
+    REFERENCES `MyPLS`.`Group` (`idGroup`)
+    ON DELETE NO ACTION
     ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
@@ -229,6 +197,31 @@ CREATE TABLE IF NOT EXISTS `MyPLS`.`Post` (
     FOREIGN KEY (`Discussions_idDiscussions`)
     REFERENCES `MyPLS`.`Discussions` (`idDiscussions`)
     ON DELETE CASCADE
+    ON UPDATE CASCADE)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `MyPLS`.`MemberList`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `MyPLS`.`MemberList` ;
+
+CREATE TABLE IF NOT EXISTS `MyPLS`.`MemberList` (
+  `idMemberList` INT NOT NULL AUTO_INCREMENT,
+  `Group_idGroup` INT NOT NULL,
+  `User_idUser` INT NOT NULL,
+  PRIMARY KEY (`idMemberList`),
+  INDEX `fk_MemberList_Group1_idx` (`Group_idGroup` ASC),
+  INDEX `fk_MemberList_User1_idx` (`User_idUser` ASC),
+  CONSTRAINT `fk_MemberList_Group1`
+    FOREIGN KEY (`Group_idGroup`)
+    REFERENCES `MyPLS`.`Group` (`idGroup`)
+    ON DELETE NO ACTION
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_MemberList_User1`
+    FOREIGN KEY (`User_idUser`)
+    REFERENCES `MyPLS`.`User` (`idUser`)
+    ON DELETE NO ACTION
     ON UPDATE CASCADE)
 ENGINE = InnoDB;
 

@@ -372,10 +372,38 @@ export default class DatabaseHandler {
      * @returns result array containing post title,content, and username of posts 
      */
     async getDiscussionPosts(discussionTitle: string){
-        const discussionId = await this.getDiscussionId(discussionTitle);
         const query = "SELECT P.title, P.content, U.username FROM Post P INNER JOIN user U ON P.User_idUser = U.idUser WHERE discussions_idDiscussions = ?";
         const connection = await this.pool.getConnection();
         const [result] = await connection.query(query,[discussionTitle]);
+        connection.release();
+        return result;
+    }
+
+    /**
+     * Rate a specified user with a number and any additional comments
+     * @param userRated name of user to be rated
+     * @param rating number specifying rating
+     * @param comment any additional comments a user has to make on that person
+     * @returns true if successful, false if error
+     */
+    async rateUser(userRated: string, rating: number, comment: string){
+        const userId = await this.getUserId(userRated);
+        const query = "INSERT INTO Ratings (User_idUser, ratingNumber, Comment) VALUES (?, ?, ?)";
+        const connection = await this.pool.getConnection();
+        const [result] = await connection.query(query,[userId,rating,comment]);
+        connection.release();
+        return true;
+    }
+
+    /**
+     * Gets the ratings of a user based on the username provided
+     * @param username name of user to fetch ratings for
+     * @returns array containing score and comments of specified user
+     */
+    async getRatings(username: string){
+        const query = "SELECT R.ratingNumber, R.Comment FROM ratings R INNER JOIN user U ON R.User_idUser = U.idUser WHERE U.username = ?";
+        const connection = await this.pool.getConnection();
+        const [result] = await connection.query(query,[username]);
         connection.release();
         return result;
     }

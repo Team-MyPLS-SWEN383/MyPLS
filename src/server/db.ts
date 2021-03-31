@@ -228,6 +228,68 @@ export default class DatabaseHandler {
     }
 
     /**
+     * Check if discussion group already exists when creating a group
+     * @param name name of discussion group to check
+     * @returns length of result array
+     */
+    async checkDiscussionGroup(name: string){
+        const query = "SELECT Name FROM MyPLS.group WHERE name = ?";
+        const connection = await this.pool.getConnection();
+        const [result] = await connection.query(query,[name]) as any;
+        connection.release();
+        return result.length > 0;
+    }
+
+    /**
+     * Gets the id of a discussion based on the title
+     * @param groupTitle title of discussion topic
+     * @returns id of topic 
+     */
+    async getDiscussionId(groupTitle: string){
+        const query = "SELECT idDiscussions FROM discussions WHERE Discussion_Title = ?";
+        const connection = await this.pool.getConnection();
+        const [result] = await connection.query(query,[groupTitle]);
+        return result[0]['idDiscussions'];
+    }
+
+    /**
+     * Creates a discussion within a discussion group
+     * @param discussionTitle name of discussion topic 
+     * @param summary summary of disucssion topic
+     * @param groupName name of group the discussion is associated with
+     * @returns true if successful, false if error
+     */
+    async createDiscussion(discussionTitle: string, summary: string, groupName: string){
+        const groupId = await this.getGroupId(groupName);
+        const query = "INSERT INTO Discussions (Discussion_Title,Summary,Group_idGroup) VALUES (?,?,?);";
+        const connection = await this.pool.getConnection();
+        const [result] = await connection.query(query,[discussionTitle,summary,groupId]);
+        return true;
+    }
+
+    /**
+     * Create a new discussion group
+     * @param name Name of group to be created
+     * @param description optional description to be inserted
+     * @returns true if successful, false if error occurs
+     */
+    async createDiscussionGroup(name: string, description: string){
+        if(!(await this.checkDiscussionGroup(name))){
+            const query = "INSERT INTO MyPLS.Group (Name, Description) VALUES (?,?);";
+            const connection = await this.pool.getConnection();
+            const[result] = await connection.query(query,[name,description]);
+            console.log("Created discussion group!");
+            connection.release();
+            return true;
+        }
+        else{
+            console.log(`Discussion group ${name} exists`);
+            return false;
+        }
+        
+    }
+
+    /**
      * Searches for discussion given parameter
      * @param keywords keyword to query database with
      * @returns list of results from the db
@@ -244,32 +306,78 @@ export default class DatabaseHandler {
      * Add a user of any kind to a group
      * @param username name of user to add to group
      * @param group name of group to add user to
-     * @returns true if user is added
+     * @returns true if user is added, false if error
      */
     async addUserToDiscussion(username: string, group: string) {
-        const userId = await this.getUserId(username);
-        const groupId = await this.getGroupId(group);
-        const query = "INSERT INTO MemberList (Group_idGroup, User_idUser) VALUES (?,?)";
-        const connection = await this.pool.getConnection();
-        const [result] = await connection.query(query,[userId,groupId]);
-        connection.release();
-        return true;
+        if(this.checkDiscussionGroup(group)){
+            const userId = await this.getUserId(username);
+            const groupId = await this.getGroupId(group);
+            const query = "INSERT INTO MemberList (Group_idGroup, User_idUser) VALUES (?,?)";
+            const connection = await this.pool.getConnection();
+            const [result] = await connection.query(query,[userId,groupId]);
+            connection.release();
+            return true;
+        }
+        else{
+            console.log(`Group ${group} doest not exist`);
+            return false;
+        }
+        
     }
     
     /**
      * Remove a user from a discussion group
      * @param username name of user to remove
      * @param group what group to remove user from
-     * @returns true if user is sucessfully removed
+     * @returns true if user is sucessfully removed, false if error
      */
     async removeStudentFromDiscussion(username: string, group: string){
+        if(this.checkDiscussionGroup(group)){
+            const userId = await this.getUserId(username);
+            const groupId = await this.getGroupId(group);
+            const query = "DELETE FROM MemberList WHERE User_idUser = ? AND Group_idGroup = ?";
+            const connection = await this.pool.getConnection();
+            const [result] = await connection.query(query,[userId,groupId]);
+            connection.release();
+            return true;
+        }
+        else{
+            console.log(`Group ${group} does not exist`);
+            return false;
+        }
+        
+    }    
+
+    /**
+     * Creates a disucssion post under a discussion group given the proper parameters
+     * @param title title of post 
+     * @param content content of post
+     * @param discussionTitle title of discussion this post falls under
+     * @param username name of user creating post
+     * @returns true if successful, false if not
+     */
+    async createDiscussionPost(title: string, content: string, discussionTitle: string, username: string){
+        const discussionId = await this.getDiscussionId(discussionTitle);
         const userId = await this.getUserId(username);
-        const groupId = await this.getGroupId(group);
-        const query = "DELETE FROM MemberList WHERE User_idUser = ? AND Group_idGroup = ?";
+        const query = "INSERT INTO Post (Title, Content, Discussions_idDiscussions, User_idUser) VALUES (?, ?, ?, ?)";
         const connection = await this.pool.getConnection();
-        const [result] = await connection.query(query,[userId,groupId]);
+        const [result] = await connection.query(query,[title,content,discussionId,userId]);
         connection.release();
         return true;
-    }    
+    }
+
+    /**
+     * Gets discussion posts in a discussion group given the discussion title
+     * @param discussionTitle title of discussion to pull up posts for
+     * @returns result array containing post title,content, and username of posts 
+     */
+    async getDiscussionPosts(discussionTitle: string){
+        const discussionId = await this.getDiscussionId(discussionTitle);
+        const query = "SELECT P.title, P.content, U.username FROM Post P INNER JOIN user U ON P.User_idUser = U.idUser WHERE discussions_idDiscussions = ?";
+        const connection = await this.pool.getConnection();
+        const [result] = await connection.query(query,[discussionTitle]);
+        connection.release();
+        return result;
+    }
 }
 

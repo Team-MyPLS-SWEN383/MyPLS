@@ -24,8 +24,8 @@ app.get("/users/", async (req, res) => {
 
 // we can use things like .get, .post, and .delete to make things RESTful and semantic
 app.post("/users/", async (req, res) => {
-  const {username, psw, role} = req.body;
-  await DB.addUser(username, psw, roleNameToId(role));
+  const {username, psw, role,fname,lname,email} = req.body;
+  await DB.addUser(username, psw, roleNameToId(role),fname,lname,email);
   res.redirect("/login");
 })
 

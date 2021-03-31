@@ -41,8 +41,8 @@ class DatabaseHandler {
         this.pool = mysql.createPool({
             connectionLimit: 25,
             host: 'localhost',
-            user: 'root',
-            password: 'pwrit2020',
+            user: 'mypls',
+            password: 'mypls123',
             database: 'mypls'
         });
     }
@@ -90,12 +90,12 @@ class DatabaseHandler {
      * @param password
      * @param roleId
      */
-    addUser(username, password, roleId) {
+    addUser(username, password, roleId, firstName, lastName, email) {
         return __awaiter(this, void 0, void 0, function* () {
             if (!(yield this.checkNewUser(username))) {
-                const query = "INSERT INTO user (username, password, Roles_idRoles) VALUES(?, ?, ?)";
+                const query = "INSERT INTO user (username, password, Roles_idRoles,FirstName,LastName,Email) VALUES(?, ?, ?,?,?,?)";
                 const connection = yield this.pool.getConnection();
-                yield connection.query(query, [username, password, roleId]);
+                yield connection.query(query, [username, password, roleId, firstName, lastName, email]);
                 console.log(`inserted new user: ${username}`);
                 connection.release();
                 return true;
@@ -124,6 +124,106 @@ class DatabaseHandler {
                 console.log(`user ${username} doesn't exist!`);
                 return false;
             }
+        });
+    }
+    checkNewCourse(coursename) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const query = "SELECT coursename FROM courses WHERE coursename = ?";
+            const connection = yield this.pool.getConnection();
+            const [result] = yield connection.query(query, [coursename]);
+            connection.release();
+            return result.length > 0;
+        });
+    }
+    /**
+     * Adds a course from the courses table given coursename
+     * @param coursename
+     */
+    addCourse(coursename, courseCode) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!(yield this.checkNewCourse(coursename))) {
+                const query = "INSERT INTO courses (coursename,courseCode) VALUES(?,?)";
+                const connection = yield this.pool.getConnection();
+                yield connection.query(query, [coursename, courseCode]);
+                console.log(`inserted new course: ${coursename}`);
+                connection.release();
+                return true;
+            }
+            else {
+                console.log("Course already exists!");
+                return false;
+            }
+        });
+    }
+    /**
+     * Deletes a course from the courses table given coursename
+     * @param coursename
+     * @param instructor
+     */
+    deleteCourse(coursename) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (yield this.checkNewCourse(coursename)) {
+                const query = "DELETE FROM courses WHERE coursename = ?";
+                const connection = yield this.pool.getConnection();
+                yield connection.query(query, [coursename]);
+                console.log(`Deleted course: ${coursename}`);
+                connection.release();
+                return true;
+            }
+            else {
+                console.log(`Course ${coursename} doesn't exist!`);
+                return false;
+            }
+        });
+    }
+    /**
+     * Adds professor to existing course
+     * @param coursename
+     * @param instructor
+     */
+    updateCourseName(coursename) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (yield this.checkNewCourse(coursename)) {
+                const query = "UPDATE courses SET coursename = ? WHERE coursename = ?";
+                const connection = yield this.pool.getConnection();
+                yield connection.query(query, [coursename, coursename]);
+                console.log(`Updated course: ${coursename}`);
+                connection.release();
+                return true;
+            }
+            else {
+                console.log(`Course ${coursename} doesn't exist!`);
+                return false;
+            }
+        });
+    }
+    updateCourseInstructor(coursename, instructor) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (yield this.checkNewCourse(coursename)) {
+                const query = "UPDATE courses SET instructor = ? WHERE coursename = ?";
+                const connection = yield this.pool.getConnection();
+                yield connection.query(query, [instructor, coursename]);
+                console.log(`Updated course: ${coursename}`);
+                connection.release();
+                return true;
+            }
+            else {
+                console.log(`Course ${coursename} doesn't exist!`);
+                return false;
+            }
+        });
+    }
+    /**
+     * Searches for discussion given parameter
+     * @param keywords
+     */
+    searchDiscussion(keywords) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const query = "SELECT * FROM discussions WHERE discussiontitle LIKE '?'";
+            const connection = yield this.pool.getConnection();
+            const [result] = yield connection.query(query, [keywords]);
+            connection.release();
+            return result.length > 0;
         });
     }
 }
@@ -161,8 +261,8 @@ app.get("/users/", (req, res) => __awaiter(void 0, void 0, void 0, function* () 
 }));
 // we can use things like .get, .post, and .delete to make things RESTful and semantic
 app.post("/users/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { username, psw, role } = req.body;
-    yield DB.addUser(username, psw, roleNameToId(role));
+    const { username, psw, role, fname, lname, email } = req.body;
+    yield DB.addUser(username, psw, roleNameToId(role), fname, lname, email);
     res.redirect("/login");
 }));
 // so we can do different things when using different methods to ping the same route

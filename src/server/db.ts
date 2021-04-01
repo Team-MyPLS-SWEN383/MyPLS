@@ -115,6 +115,30 @@ export default class DatabaseHandler {
     }
 
     /**
+     * Method to get list of all discussions in the database
+     * @returns Array of discussions
+     */
+    async getDiscussions(){
+        const query = "select * from discussions"
+        const connection = await this.pool.getConnection();
+        const[result] = await connection.query(query);
+        connection.release();
+        return result;
+    }
+
+    /**
+     * Method to get all posts within the database
+     * @returns Array of posts
+     */
+    async getPosts(){
+        const query = "SELECT * FROM post";
+        const connection = await this.pool.getConnection();
+        const[result] = await connection.query(query);
+        connection.release();
+        return result;
+    }
+
+    /**
      * Inserts a new user into the user table with their provided information
      * called after checking if they already exist
      * @param username new user's username

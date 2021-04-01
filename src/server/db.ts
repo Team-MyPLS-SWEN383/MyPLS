@@ -91,6 +91,30 @@ export default class DatabaseHandler {
     }
 
     /**
+     * Method to get list of *all* courses in the database
+     * @returns Array of courses in database
+     */
+    async getCourses(){
+        const query = "SELECT * FROM courses";
+        const connection = await this.pool.getConnection();
+        const [result] = await connection.query(query);
+        connection.release;
+        return result;
+    }
+
+    /**
+     * Method to get list of *all* groups in the database
+     * @returns Array of groups that exist in the database
+     */
+    async getGroups(){
+        const query = "SELECT * FROM mypls.groups";
+        const connection = await this.pool.getConnection();
+        const [result] = await connection.query(query);
+        connection.release();
+        return result;
+    }
+
+    /**
      * Inserts a new user into the user table with their provided information
      * called after checking if they already exist
      * @param username new user's username

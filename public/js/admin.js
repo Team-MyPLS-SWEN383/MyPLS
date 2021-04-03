@@ -1,4 +1,3 @@
-filterSelection("all");
 function filterSelection(c) {
   var x, i;
   x = document.getElementsByClassName("filterDiv");
@@ -69,3 +68,4 @@ window.onclick = function(event) {
 function deleteFunction() {
   confirm("Are you sure you want to delete the selection!");
 }
+

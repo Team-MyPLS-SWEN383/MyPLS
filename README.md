@@ -35,3 +35,4 @@ I have converted this repository to use [typescript](https://www.typescriptlang.
 ### Rollup
 
 Because we use typescript now, we'll need to transpile our code to javascript before the browser can understand it. To do this I use a npm package called Rollup. This is configured in the `rollup.config.js` file. This way, all we need to do to compile everything to javascript and put it in the proper location is type `npm run build`.
+

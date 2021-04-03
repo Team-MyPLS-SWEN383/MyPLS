@@ -7,6 +7,7 @@ SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,N
 -- -----------------------------------------------------
 -- Schema MyPLS
 -- -----------------------------------------------------
+DROP SCHEMA IF EXISTS `MyPLS` ;
 
 -- -----------------------------------------------------
 -- Schema MyPLS
@@ -27,6 +28,29 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
+-- Table `MyPLS`.`User`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `MyPLS`.`User` ;
+
+CREATE TABLE IF NOT EXISTS `MyPLS`.`User` (
+  `idUser` INT NOT NULL AUTO_INCREMENT,
+  `username` VARCHAR(45) NOT NULL,
+  `password` VARCHAR(45) NOT NULL,
+  `Roles_idRoles` INT NOT NULL,
+  `FirstName` VARCHAR(45) NOT NULL,
+  `LastName` VARCHAR(45) NOT NULL,
+  `Email` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`idUser`),
+  INDEX `fk_User_Roles1_idx` (`Roles_idRoles` ASC),
+  CONSTRAINT `fk_User_Roles1`
+    FOREIGN KEY (`Roles_idRoles`)
+    REFERENCES `MyPLS`.`Roles` (`idRoles`)
+    ON DELETE NO ACTION
+    ON UPDATE CASCADE)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
 -- Table `MyPLS`.`Courses`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `MyPLS`.`Courses` ;
@@ -34,7 +58,15 @@ DROP TABLE IF EXISTS `MyPLS`.`Courses` ;
 CREATE TABLE IF NOT EXISTS `MyPLS`.`Courses` (
   `idCourse` INT NOT NULL AUTO_INCREMENT,
   `coursename` VARCHAR(45) NOT NULL,
-  PRIMARY KEY (`idCourse`))
+  `courseCode` VARCHAR(25) NOT NULL,
+  `User_idUser` INT NOT NULL,
+  PRIMARY KEY (`idCourse`),
+  INDEX `fk_Courses_User1_idx` (`User_idUser` ASC),
+  CONSTRAINT `fk_Courses_User1`
+    FOREIGN KEY (`User_idUser`)
+    REFERENCES `MyPLS`.`User` (`idUser`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
@@ -53,26 +85,6 @@ CREATE TABLE IF NOT EXISTS `MyPLS`.`Lecture` (
   CONSTRAINT `fk_Lecture_Courses1`
     FOREIGN KEY (`Courses_idCourse`)
     REFERENCES `MyPLS`.`Courses` (`idCourse`)
-    ON DELETE NO ACTION
-    ON UPDATE CASCADE)
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `MyPLS`.`User`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `MyPLS`.`User` ;
-
-CREATE TABLE IF NOT EXISTS `MyPLS`.`User` (
-  `idUser` INT NOT NULL AUTO_INCREMENT,
-  `username` VARCHAR(45) NOT NULL,
-  `password` VARCHAR(45) NOT NULL,
-  `Roles_idRoles` INT NOT NULL,
-  PRIMARY KEY (`idUser`),
-  INDEX `fk_User_Roles1_idx` (`Roles_idRoles` ASC),
-  CONSTRAINT `fk_User_Roles1`
-    FOREIGN KEY (`Roles_idRoles`)
-    REFERENCES `MyPLS`.`Roles` (`idRoles`)
     ON DELETE NO ACTION
     ON UPDATE CASCADE)
 ENGINE = InnoDB;
@@ -191,13 +203,20 @@ CREATE TABLE IF NOT EXISTS `MyPLS`.`Post` (
   `Title` VARCHAR(45) NOT NULL,
   `Content` VARCHAR(500) NOT NULL,
   `Discussions_idDiscussions` INT NOT NULL,
+  `User_idUser` INT NOT NULL,
   PRIMARY KEY (`idPost`),
   INDEX `fk_Post_Discussions1_idx` (`Discussions_idDiscussions` ASC),
+  INDEX `fk_Post_User1_idx` (`User_idUser` ASC),
   CONSTRAINT `fk_Post_Discussions1`
     FOREIGN KEY (`Discussions_idDiscussions`)
     REFERENCES `MyPLS`.`Discussions` (`idDiscussions`)
     ON DELETE CASCADE
-    ON UPDATE CASCADE)
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_Post_User1`
+    FOREIGN KEY (`User_idUser`)
+    REFERENCES `MyPLS`.`User` (`idUser`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
@@ -247,9 +266,80 @@ COMMIT;
 -- -----------------------------------------------------
 START TRANSACTION;
 USE `MyPLS`;
-INSERT INTO `MyPLS`.`User` (`idUser`, `username`, `password`, `Roles_idRoles`) VALUES (1, 'prof123', 'pass', 2);
-INSERT INTO `MyPLS`.`User` (`idUser`, `username`, `password`, `Roles_idRoles`) VALUES (2, 'stu123', 'stu', 3);
-INSERT INTO `MyPLS`.`User` (`idUser`, `username`, `password`, `Roles_idRoles`) VALUES (3, 'manager', 'admin', 1);
+INSERT INTO `MyPLS`.`User` (`idUser`, `username`, `password`, `Roles_idRoles`, `FirstName`, `LastName`, `Email`) VALUES (1, 'prof123', 'pass', 2, 'test', 'prof', 'testprof123@rit.edu');
+INSERT INTO `MyPLS`.`User` (`idUser`, `username`, `password`, `Roles_idRoles`, `FirstName`, `LastName`, `Email`) VALUES (2, 'stu123', 'stu', 3, 'test', 'stu', 'teststu123@rit.edu');
+INSERT INTO `MyPLS`.`User` (`idUser`, `username`, `password`, `Roles_idRoles`, `FirstName`, `LastName`, `Email`) VALUES (3, 'manager', 'admin', 1, 'admin', 'test', 'admintest@rit.edu');
 
 COMMIT;
 
+
+-- -----------------------------------------------------
+-- Data for table `MyPLS`.`Courses`
+-- -----------------------------------------------------
+START TRANSACTION;
+USE `MyPLS`;
+INSERT INTO `MyPLS`.`Courses` (`idCourse`, `coursename`, `courseCode`, `User_idUser`) VALUES (1, 'Software Design Principles', 'SWEN-383', 1);
+
+COMMIT;
+
+
+-- -----------------------------------------------------
+-- Data for table `MyPLS`.`Ratings`
+-- -----------------------------------------------------
+START TRANSACTION;
+USE `MyPLS`;
+INSERT INTO `MyPLS`.`Ratings` (`idRatings`, `User_idUser`, `ratingNumber`, `Comment`) VALUES (1, 1, 10, 'Best professor at RIT');
+
+COMMIT;
+
+
+-- -----------------------------------------------------
+-- Data for table `MyPLS`.`Group`
+-- -----------------------------------------------------
+START TRANSACTION;
+USE `MyPLS`;
+INSERT INTO `MyPLS`.`Group` (`idGroup`, `Name`, `Description`) VALUES (1, 'SWEN Group Project', 'Discussion board for SWEN project');
+
+COMMIT;
+
+
+-- -----------------------------------------------------
+-- Data for table `MyPLS`.`Discussions`
+-- -----------------------------------------------------
+START TRANSACTION;
+USE `MyPLS`;
+INSERT INTO `MyPLS`.`Discussions` (`idDiscussions`, `Discussion_Title`, `Summary`, `Group_idGroup`) VALUES (1, 'Sprint Assistance', 'Need help with your sprint? Ask here!', 1);
+
+COMMIT;
+
+
+-- -----------------------------------------------------
+-- Data for table `MyPLS`.`Classlist`
+-- -----------------------------------------------------
+START TRANSACTION;
+USE `MyPLS`;
+INSERT INTO `MyPLS`.`Classlist` (`idClasslist`, `User_idUser`, `Class_idClass`) VALUES (1, 1, 1);
+INSERT INTO `MyPLS`.`Classlist` (`idClasslist`, `User_idUser`, `Class_idClass`) VALUES (2, 2, 1);
+
+COMMIT;
+
+
+-- -----------------------------------------------------
+-- Data for table `MyPLS`.`Post`
+-- -----------------------------------------------------
+START TRANSACTION;
+USE `MyPLS`;
+INSERT INTO `MyPLS`.`Post` (`idPost`, `Title`, `Content`, `Discussions_idDiscussions`, `User_idUser`) VALUES (1, 'Course Creation Help', 'Need help with creating courses. Any one able to help?', 1, 2);
+
+COMMIT;
+
+
+-- -----------------------------------------------------
+-- Data for table `MyPLS`.`MemberList`
+-- -----------------------------------------------------
+START TRANSACTION;
+USE `MyPLS`;
+INSERT INTO `MyPLS`.`MemberList` (`idMemberList`, `Group_idGroup`, `User_idUser`) VALUES (1, 1, 2);
+INSERT INTO `MyPLS`.`MemberList` (`idMemberList`, `Group_idGroup`, `User_idUser`) VALUES (2, 1, 1);
+
+COMMIT;

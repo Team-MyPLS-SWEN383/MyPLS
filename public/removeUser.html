@@ -28,7 +28,7 @@
   // this is how you go about using the DELETE method with form data
   // this is how it has to be done because method="DELETE" doesn't work in HTML
   const handler = async (form) => {
-    await fetch("/users/", {
+    await fetch("/users", {
       method: "DELETE",
       body: JSON.stringify({
         ...Object.fromEntries((new FormData(form)).entries())

@@ -78,7 +78,8 @@ DROP TABLE IF EXISTS `MyPLS`.`Lecture` ;
 CREATE TABLE IF NOT EXISTS `MyPLS`.`Lecture` (
   `idLecture` INT NOT NULL AUTO_INCREMENT,
   `title` VARCHAR(45) NOT NULL,
-  `content` VARCHAR(500) NOT NULL,
+  `summary` VARCHAR(500) NOT NULL,
+  `UnlockDate` DATETIME NOT NULL,
   `Courses_idCourse` INT NOT NULL,
   PRIMARY KEY (`idLecture`),
   INDEX `fk_Lecture_Courses1_idx` (`Courses_idCourse` ASC),
@@ -99,6 +100,7 @@ CREATE TABLE IF NOT EXISTS `MyPLS`.`Grades` (
   `idGrades` INT NOT NULL AUTO_INCREMENT,
   `Class_idClass` INT NOT NULL,
   `User_idUser` INT NOT NULL,
+  `Average` DECIMAL NOT NULL,
   PRIMARY KEY (`idGrades`),
   INDEX `fk_Grades_Class1_idx` (`Class_idClass` ASC),
   INDEX `fk_Grades_User1_idx` (`User_idUser` ASC),
@@ -245,6 +247,85 @@ CREATE TABLE IF NOT EXISTS `MyPLS`.`MemberList` (
 ENGINE = InnoDB;
 
 
+-- -----------------------------------------------------
+-- Table `MyPLS`.`Content`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `MyPLS`.`Content` ;
+
+CREATE TABLE IF NOT EXISTS `MyPLS`.`Content` (
+  `idContent` INT NOT NULL AUTO_INCREMENT,
+  `ContentLink` VARCHAR(100) NOT NULL,
+  `Lecture_idLecture` INT NOT NULL,
+  PRIMARY KEY (`idContent`),
+  INDEX `fk_Content_Lecture1_idx` (`Lecture_idLecture` ASC),
+  CONSTRAINT `fk_Content_Lecture1`
+    FOREIGN KEY (`Lecture_idLecture`)
+    REFERENCES `MyPLS`.`Lecture` (`idLecture`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `MyPLS`.`Quiz`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `MyPLS`.`Quiz` ;
+
+CREATE TABLE IF NOT EXISTS `MyPLS`.`Quiz` (
+  `idQuiz` INT NOT NULL AUTO_INCREMENT,
+  `Title` VARCHAR(45) NOT NULL,
+  `StartTime` DATETIME NOT NULL,
+  `EndTime` DATETIME NOT NULL,
+  `Lecture_idLecture` INT NOT NULL,
+  PRIMARY KEY (`idQuiz`),
+  INDEX `fk_Quiz_Lecture1_idx` (`Lecture_idLecture` ASC),
+  CONSTRAINT `fk_Quiz_Lecture1`
+    FOREIGN KEY (`Lecture_idLecture`)
+    REFERENCES `MyPLS`.`Lecture` (`idLecture`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `MyPLS`.`Question`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `MyPLS`.`Question` ;
+
+CREATE TABLE IF NOT EXISTS `MyPLS`.`Question` (
+  `idQuestions` INT NOT NULL,
+  `Question` VARCHAR(45) NOT NULL,
+  `Quiz_idQuiz` INT NOT NULL,
+  PRIMARY KEY (`idQuestions`),
+  INDEX `fk_Question_Quiz1_idx` (`Quiz_idQuiz` ASC),
+  CONSTRAINT `fk_Question_Quiz1`
+    FOREIGN KEY (`Quiz_idQuiz`)
+    REFERENCES `MyPLS`.`Quiz` (`idQuiz`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `MyPLS`.`QuizChoice`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `MyPLS`.`QuizChoice` ;
+
+CREATE TABLE IF NOT EXISTS `MyPLS`.`QuizChoice` (
+  `idQuizChoice` INT NOT NULL AUTO_INCREMENT,
+  `Text` VARCHAR(100) NOT NULL,
+  `Answer` INT NOT NULL,
+  `Question_idQuestions` INT NOT NULL,
+  PRIMARY KEY (`idQuizChoice`),
+  INDEX `fk_QuizChoice_Question1_idx` (`Question_idQuestions` ASC),
+  CONSTRAINT `fk_QuizChoice_Question1`
+    FOREIGN KEY (`Question_idQuestions`)
+    REFERENCES `MyPLS`.`Question` (`idQuestions`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
@@ -284,73 +365,11 @@ COMMIT;
 
 
 -- -----------------------------------------------------
--- Data for table `MyPLS`.`Ratings`
+-- Data for table `MyPLS`.`Lecture`
 -- -----------------------------------------------------
 START TRANSACTION;
 USE `MyPLS`;
-INSERT INTO `MyPLS`.`Ratings` (`idRatings`, `User_idUser`, `ratingNumber`, `Comment`) VALUES (1, 1, 10, 'Best professor at RIT');
-
-COMMIT;
-
-
--- -----------------------------------------------------
--- Data for table `MyPLS`.`Group`
--- -----------------------------------------------------
-START TRANSACTION;
-USE `MyPLS`;
-INSERT INTO `MyPLS`.`Group` (`idGroup`, `Name`, `Description`) VALUES (1, 'SWEN Group Project', 'Discussion board for SWEN project');
-
-COMMIT;
-
-
--- -----------------------------------------------------
--- Data for table `MyPLS`.`Discussions`
--- -----------------------------------------------------
-START TRANSACTION;
-USE `MyPLS`;
-INSERT INTO `MyPLS`.`Discussions` (`idDiscussions`, `Discussion_Title`, `Summary`, `Group_idGroup`) VALUES (1, 'Sprint Assistance', 'Need help with your sprint? Ask here!', 1);
-
-COMMIT;
-
-
--- -----------------------------------------------------
--- Data for table `MyPLS`.`Classlist`
--- -----------------------------------------------------
-START TRANSACTION;
-USE `MyPLS`;
-INSERT INTO `MyPLS`.`Classlist` (`idClasslist`, `User_idUser`, `Class_idClass`) VALUES (1, 1, 1);
-INSERT INTO `MyPLS`.`Classlist` (`idClasslist`, `User_idUser`, `Class_idClass`) VALUES (2, 2, 1);
-
-COMMIT;
-
-
--- -----------------------------------------------------
--- Data for table `MyPLS`.`Post`
--- -----------------------------------------------------
-START TRANSACTION;
-USE `MyPLS`;
-INSERT INTO `MyPLS`.`Post` (`idPost`, `Title`, `Content`, `Discussions_idDiscussions`, `User_idUser`) VALUES (1, 'Course Creation Help', 'Need help with creating courses. Any one able to help?', 1, 2);
-
-COMMIT;
-
-
--- -----------------------------------------------------
--- Data for table `MyPLS`.`MemberList`
--- -----------------------------------------------------
-START TRANSACTION;
-USE `MyPLS`;
-INSERT INTO `MyPLS`.`MemberList` (`idMemberList`, `Group_idGroup`, `User_idUser`) VALUES (1, 1, 2);
-INSERT INTO `MyPLS`.`MemberList` (`idMemberList`, `Group_idGroup`, `User_idUser`) VALUES (2, 1, 1);
-
-COMMIT;
-
-
--- -----------------------------------------------------
--- Data for table `MyPLS`.`Courses`
--- -----------------------------------------------------
-START TRANSACTION;
-USE `MyPLS`;
-INSERT INTO `MyPLS`.`Courses` (`idCourse`, `coursename`, `courseCode`, `User_idUser`) VALUES (1, 'Software Design Principles', 'SWEN-383', 1);
+INSERT INTO `MyPLS`.`Lecture` (`idLecture`, `title`, `summary`, `UnlockDate`, `Courses_idCourse`) VALUES (1, 'Syllabus Review', 'In this lecture we will be going over the syllabus and what is expected from students', '2021-04-06 12:40', 1);
 
 COMMIT;
 
@@ -415,3 +434,45 @@ INSERT INTO `MyPLS`.`MemberList` (`idMemberList`, `Group_idGroup`, `User_idUser`
 INSERT INTO `MyPLS`.`MemberList` (`idMemberList`, `Group_idGroup`, `User_idUser`) VALUES (2, 1, 1);
 
 COMMIT;
+
+
+-- -----------------------------------------------------
+-- Data for table `MyPLS`.`Content`
+-- -----------------------------------------------------
+START TRANSACTION;
+USE `MyPLS`;
+INSERT INTO `MyPLS`.`Content` (`idContent`, `ContentLink`, `Lecture_idLecture`) VALUES (1, 'https://www.youtube.com/watch?v=gbQS1ExSeBQ', 1);
+
+COMMIT;
+
+
+-- -----------------------------------------------------
+-- Data for table `MyPLS`.`Quiz`
+-- -----------------------------------------------------
+START TRANSACTION;
+USE `MyPLS`;
+INSERT INTO `MyPLS`.`Quiz` (`idQuiz`, `Title`, `StartTime`, `EndTime`, `Lecture_idLecture`) VALUES (1, 'Syllabus Check', '2021-04-06 12:40', '2021-04-08 23:59', 1);
+
+COMMIT;
+
+
+-- -----------------------------------------------------
+-- Data for table `MyPLS`.`Question`
+-- -----------------------------------------------------
+START TRANSACTION;
+USE `MyPLS`;
+INSERT INTO `MyPLS`.`Question` (`idQuestions`, `Question`, `Quiz_idQuiz`) VALUES (1, 'Is plagarism bad?', 1);
+
+COMMIT;
+
+
+-- -----------------------------------------------------
+-- Data for table `MyPLS`.`QuizChoice`
+-- -----------------------------------------------------
+START TRANSACTION;
+USE `MyPLS`;
+INSERT INTO `MyPLS`.`QuizChoice` (`idQuizChoice`, `Text`, `Answer`, `Question_idQuestions`) VALUES (1, 'Yes', 1, 1);
+INSERT INTO `MyPLS`.`QuizChoice` (`idQuizChoice`, `Text`, `Answer`, `Question_idQuestions`) VALUES (2, 'Of course not', 0, 1);
+
+COMMIT;
+

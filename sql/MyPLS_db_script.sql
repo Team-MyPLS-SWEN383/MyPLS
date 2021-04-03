@@ -343,3 +343,75 @@ INSERT INTO `MyPLS`.`MemberList` (`idMemberList`, `Group_idGroup`, `User_idUser`
 INSERT INTO `MyPLS`.`MemberList` (`idMemberList`, `Group_idGroup`, `User_idUser`) VALUES (2, 1, 1);
 
 COMMIT;
+
+
+-- -----------------------------------------------------
+-- Data for table `MyPLS`.`Courses`
+-- -----------------------------------------------------
+START TRANSACTION;
+USE `MyPLS`;
+INSERT INTO `MyPLS`.`Courses` (`idCourse`, `coursename`, `courseCode`, `User_idUser`) VALUES (1, 'Software Design Principles', 'SWEN-383', 1);
+
+COMMIT;
+
+
+-- -----------------------------------------------------
+-- Data for table `MyPLS`.`Ratings`
+-- -----------------------------------------------------
+START TRANSACTION;
+USE `MyPLS`;
+INSERT INTO `MyPLS`.`Ratings` (`idRatings`, `User_idUser`, `ratingNumber`, `Comment`) VALUES (1, 1, 10, 'Best professor at RIT');
+
+COMMIT;
+
+
+-- -----------------------------------------------------
+-- Data for table `MyPLS`.`Group`
+-- -----------------------------------------------------
+START TRANSACTION;
+USE `MyPLS`;
+INSERT INTO `MyPLS`.`Group` (`idGroup`, `Name`, `Description`) VALUES (1, 'SWEN Group Project', 'Discussion board for SWEN project');
+
+COMMIT;
+
+
+-- -----------------------------------------------------
+-- Data for table `MyPLS`.`Discussions`
+-- -----------------------------------------------------
+START TRANSACTION;
+USE `MyPLS`;
+INSERT INTO `MyPLS`.`Discussions` (`idDiscussions`, `Discussion_Title`, `Summary`, `Group_idGroup`) VALUES (1, 'Sprint Assistance', 'Need help with your sprint? Ask here!', 1);
+
+COMMIT;
+
+
+-- -----------------------------------------------------
+-- Data for table `MyPLS`.`Classlist`
+-- -----------------------------------------------------
+START TRANSACTION;
+USE `MyPLS`;
+INSERT INTO `MyPLS`.`Classlist` (`idClasslist`, `User_idUser`, `Class_idClass`) VALUES (1, 1, 1);
+INSERT INTO `MyPLS`.`Classlist` (`idClasslist`, `User_idUser`, `Class_idClass`) VALUES (2, 2, 1);
+
+COMMIT;
+
+
+-- -----------------------------------------------------
+-- Data for table `MyPLS`.`Post`
+-- -----------------------------------------------------
+START TRANSACTION;
+USE `MyPLS`;
+INSERT INTO `MyPLS`.`Post` (`idPost`, `Title`, `Content`, `Discussions_idDiscussions`, `User_idUser`) VALUES (1, 'Course Creation Help', 'Need help with creating courses. Any one able to help?', 1, 2);
+
+COMMIT;
+
+
+-- -----------------------------------------------------
+-- Data for table `MyPLS`.`MemberList`
+-- -----------------------------------------------------
+START TRANSACTION;
+USE `MyPLS`;
+INSERT INTO `MyPLS`.`MemberList` (`idMemberList`, `Group_idGroup`, `User_idUser`) VALUES (1, 1, 2);
+INSERT INTO `MyPLS`.`MemberList` (`idMemberList`, `Group_idGroup`, `User_idUser`) VALUES (2, 1, 1);
+
+COMMIT;

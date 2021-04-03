@@ -164,6 +164,78 @@ export default class DatabaseHandler {
     }
 
     /**
+     * Update an existing user's first name
+     * @param username name of user to be modified
+     * @param firstName new first name for user
+     * @returns true on success, false if user does not exist
+     */
+    async updateUserFirstName(username: string, firstName: string){
+        if(await this.checkNewUser(username)){
+            const query = "UPDATE user SET FirstName = ? WHERE username = ?";
+            const connection = await this.pool.getConnection();
+            const [result] = await connection.query(query,[username,firstName]);
+            console.log(`Updated first name for: ${username}`);
+            return true;
+        }
+        console.log(`user: ${username} does not exist`);
+        return false;
+    }
+    
+    /**
+     * Update an existing user's last name
+     * @param username name of user to be modified
+     * @param lastName new last name for user
+     * @returns true on success, false if user does not exist
+     */
+    async updateUserLastName(username: string, lastName: string){
+        if(await this.checkNewUser(username)){
+            const query = "UPDATE user SET LastName = ? WHERE username = ?";
+            const connection = await this.pool.getConnection();
+            const [result] = await connection.query(query,[username,lastName]);
+            console.log(`Updated last name for: ${username}`);
+            return true;
+        }
+        console.log(`user: ${username} does not exist`);
+        return false;
+    }
+
+    /**
+     * Update an existing user's email
+     * @param username name of user to be modified
+     * @param email new email for user
+     * @returns true on success, false if user does not exist
+     */
+    async updateUserEmail(username: string, email: string){
+        if(await this.checkNewUser(username)){
+            const query = "UPDATE user SET Email = ? WHERE username = ?";
+            const connection = await this.pool.getConnection();
+            const [result] = await connection.query(query,[username,email]);
+            console.log(`Updated email for: ${username}`);
+            return true;
+        }
+        console.log(`user: ${username} does not exist`);
+        return false;
+    }
+
+    /**
+     * Update an existing user's password
+     * @param username name of user to be modified
+     * @param password new password for user
+     * @returns true on success, false if user does not exist
+     */
+    async updateUserPassword(username: string, password: string){
+        if(await this.checkNewUser(username)){
+            const query = "UPDATE user SET password = ? WHERE username = ?";
+            const connection = await this.pool.getConnection();
+            const [result] = await connection.query(query,[username,password]);
+            console.log(`Updated password for: ${username}`);
+            return true;
+        }
+        console.log(`user: ${username} does not exist`);
+        return false;
+    }
+
+    /**
      * Deletes a user from the users table given their username
      * @param username name of user to delete
      */
@@ -182,29 +254,46 @@ export default class DatabaseHandler {
     }
 
     /**
-     * Check if course already exists in database
-     * @param coursename name of course to check database for
+     * Check if course code already exists in database
+     * @param courseCode Code of course to check database for
      * @returns the results of the check
      */
-    async checkNewCourse(coursename: string) {
-        const query = "SELECT coursename FROM courses WHERE coursename = ?";
+    async checkNewCourse(courseCode: string) {
+        const query = "SELECT courseCode FROM courses WHERE courseCode = ?";
         const connection = await this.pool.getConnection();
-        const [result] = await connection.query(query, [coursename]) as any[];
+        const [result] = await connection.query(query, [courseCode]) as any[];
         connection.release();
         return result.length > 0;
     }
 
     /**
+     * Checks if course name exists in the database
+     * @param coursename name of course to search for
+     * @returns results of the check
+     */
+    async checkCourseName(coursename:string){
+        const query = "SELECT coursename FROM courses WHERE coursename = ?";
+        const connection = await this.pool.getConnection();
+        const[result] = await connection.query(query,[coursename]) as any[];
+        connection.release();
+        return result.legth > 0;
+    }
+
+    /**
      * Adds a course from the courses table given coursename
      * @param coursename 
+     * @param courseCode
+     * @param username
+     * @returns true if successful, false if course already exists
      */
 
     // FIXME: handle "User_idUser" field
-    async addCourse(coursename: string, courseCode: string) {
-        if (!(await this.checkNewCourse(coursename))) {
-            const query = "INSERT INTO courses (coursename,courseCode) VALUES(?,?)";
+    async addCourse(coursename: string, courseCode: string, username: string) {
+        if (!(await this.checkNewCourse(courseCode))) {
+            const userId = await this.getUserId(username);
+            const query = "INSERT INTO courses (coursename,courseCode,User_idUser) VALUES(?,?,?)";
             const connection = await this.pool.getConnection();
-            const [result] = await connection.query(query, [coursename, courseCode]);
+            const [result] = await connection.query(query, [coursename, courseCode,username]);
             console.log(`inserted new course: ${coursename}`);
             connection.release();
             return true;
@@ -220,16 +309,16 @@ export default class DatabaseHandler {
      * @returns true if successful, false if an error occurs
      */
 
-    async deleteCourse(coursename: string) {
-        if (await this.checkNewCourse(coursename)) {
-            const query = "DELETE FROM courses WHERE coursename = ?";
+    async deleteCourse(courseCode: string) {
+        if (await this.checkNewCourse(courseCode)) {
+            const query = "DELETE FROM courses WHERE courseCode = ?";
             const connection = await this.pool.getConnection();
-            await connection.query(query, [coursename]);
-            console.log(`Deleted course: ${coursename}`)
+            await connection.query(query, [courseCode]);
+            console.log(`Deleted course: ${courseCode}`)
             connection.release();
             return true;
         } else {
-            console.log(`Course ${coursename} doesn't exist!`);
+            console.log(`Course ${courseCode} doesn't exist!`);
             return false;
         }
     }
@@ -241,7 +330,7 @@ export default class DatabaseHandler {
      * @returns true if changed, false if error
      */
     async updateCourseName(coursename: string, newCourseName: string) {
-        if (await this.checkNewCourse(coursename)) {
+        if (await this.checkCourseName(coursename)) {
             const query = "UPDATE courses SET coursename = ? WHERE coursename = ?";
             const connection = await this.pool.getConnection();
             const [result] = await connection.query(query, [newCourseName, coursename]);
@@ -256,22 +345,23 @@ export default class DatabaseHandler {
 
     /**
      * Update the instructor for a course
-     * @param coursename name to modify course instructor
+     * @param coursename code to modify course instructor
      * @param instructor name of instructor 
      * @returns true if successful, false if an error occurs
      * 
      * NEED TO REWORK so it gets instructor ID then assign it to course
      */
-    async updateCourseInstructor(coursename: string, instructor: string) {
-        if (await this.checkNewCourse(coursename)) {
-            const query = "UPDATE courses SET instructor = ? WHERE coursename = ?";
+    async updateCourseInstructor(courseCode: string, instructor: string) {
+        if (await this.checkNewCourse(courseCode)) {
+            const instructorId = await this.getUserId(instructor);
+            const query = "UPDATE courses SET User_idUser = ? WHERE courseCode = ?";
             const connection = await this.pool.getConnection();
-            const [result] = await connection.query(query, [instructor, coursename]);
-            console.log(`Updated course: ${coursename}`);
+            const [result] = await connection.query(query, [instructorId, courseCode]);
+            console.log(`Updated course: ${courseCode}`);
             connection.release();
             return true;
         } else {
-            console.log(`Course ${coursename} doesn't exist!`);
+            console.log(`Course ${courseCode} doesn't exist!`);
             return false;
         }
     }
@@ -336,6 +426,45 @@ export default class DatabaseHandler {
             return false;
         }
 
+    }
+
+    /**
+     * Deletes a discussion group based on given name
+     * @param name name of group to be deleted
+     * @returns true if successful, false if group does not exist
+     */
+    async deleteGroup(name: string){
+        if(await this.checkDiscussionGroup(name)){
+            const query = "DELETE FROM mypls.group WHERE name = ?";
+            const connection = await this.pool.getConnection();
+            const [result] = await connection.query(query,[name]);
+            connection.release();
+            return true;
+        }
+        else{
+            console.log(`Group ${name} does not exist`);
+            return false;
+        }
+    }
+
+    /**
+     * Updates an existing group name
+     * @param currentName name of group to be modified
+     * @param newName new name to replace it
+     * @returns true if successful, false if current name does not exist or new name is already taken
+     */
+    async updateGroupName(currentName: string, newName: string){
+        if( await this.checkDiscussionGroup(currentName) && ! await this.checkDiscussionGroup(newName)){
+            const query = "UPDATE mypls.group SET Name = ? WHERE Name = ?";
+            const connection = await this.pool.getConnection();
+            const [result] = await connection.query(query,[newName,currentName]);
+            connection.release();
+            return true;
+        }
+        else{
+            console.log(`Group ${newName} already exists in database`);
+            return false;
+        }
     }
 
     /**

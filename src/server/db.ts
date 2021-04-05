@@ -718,4 +718,26 @@ export default class DatabaseHandler {
         }
     }
 
+    /**
+     * Student - See professor ratings
+     * @param instructor
+     */
+
+    async getInstructorID(instructor: string) {
+        const query = "SELECT * FROM User WHERE Roles_idRoles = 2 AND FirstName = ? OR LastName = ?";
+        const connection = await this.pool.getConnection();
+        const [result] = await connection.query(query, [instructor, instructor]);
+        connection.release();
+        return result;
+    }
+
+     async getRating(instructor: string) {
+        var profID = this.getInstructorID(instructor);
+        const query = "SELECT * FROM Ratings WHERE User_idUser = ?";
+        const connection = await this.pool.getConnection();
+        const [result] = await connection.query(query, [profID]);
+        connection.release();
+        return result;
+    }
+
 }

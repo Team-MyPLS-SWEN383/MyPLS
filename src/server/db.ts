@@ -38,6 +38,7 @@ export default class DatabaseHandler {
         const data = JSON.stringify(result);
         console.log(result[0]['role_name']);
         connection.release();
+        return data;
     }
 
     /**
@@ -98,7 +99,7 @@ export default class DatabaseHandler {
         const query = "SELECT * FROM courses";
         const connection = await this.pool.getConnection();
         const [result] = await connection.query(query);
-        connection.release;
+        connection.release();
         return result;
     }
 
@@ -175,6 +176,7 @@ export default class DatabaseHandler {
             const connection = await this.pool.getConnection();
             const [result] = await connection.query(query,[username,firstName]);
             console.log(`Updated first name for: ${username}`);
+            connection.release();
             return true;
         }
         console.log(`user: ${username} does not exist`);
@@ -193,6 +195,7 @@ export default class DatabaseHandler {
             const connection = await this.pool.getConnection();
             const [result] = await connection.query(query,[username,lastName]);
             console.log(`Updated last name for: ${username}`);
+            connection.release();
             return true;
         }
         console.log(`user: ${username} does not exist`);
@@ -211,6 +214,7 @@ export default class DatabaseHandler {
             const connection = await this.pool.getConnection();
             const [result] = await connection.query(query,[username,email]);
             console.log(`Updated email for: ${username}`);
+            connection.release();
             return true;
         }
         console.log(`user: ${username} does not exist`);
@@ -229,6 +233,7 @@ export default class DatabaseHandler {
             const connection = await this.pool.getConnection();
             const [result] = await connection.query(query,[username,password]);
             console.log(`Updated password for: ${username}`);
+            connection.release();
             return true;
         }
         console.log(`user: ${username} does not exist`);
@@ -388,6 +393,7 @@ export default class DatabaseHandler {
         const query = "SELECT idDiscussions FROM discussions WHERE Discussion_Title = ?";
         const connection = await this.pool.getConnection();
         const [result] = await connection.query(query,[groupTitle]);
+        connection.release();
         return result[0]['idDiscussions'];
     }
 
@@ -403,6 +409,7 @@ export default class DatabaseHandler {
         const query = "INSERT INTO Discussions (Discussion_Title,Summary,Group_idGroup) VALUES (?,?,?);";
         const connection = await this.pool.getConnection();
         const [result] = await connection.query(query,[discussionTitle,summary,groupId]);
+        connection.release();
         return true;
     }
 

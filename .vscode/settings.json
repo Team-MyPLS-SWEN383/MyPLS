@@ -7,11 +7,24 @@
             "previewLimit": 50,
             "server": "localhost",
             "port": 3306,
-            "askForPassword": true,
             "driver": "MySQL",
             "name": "Localhost",
             "username": "root",
-            "database": "MyPLS"
+            "database": "MyPLS",
+            "password": "Aidan082101"
+        },
+        {
+            "mysqlOptions": {
+                "authProtocol": "default"
+            },
+            "previewLimit": 50,
+            "server": "localhost",
+            "port": 3306,
+            "driver": "MySQL",
+            "name": "MyPLS",
+            "database": "MyPLS",
+            "username": "mypls",
+            "password": "mypls123"
         }
     ]
 }

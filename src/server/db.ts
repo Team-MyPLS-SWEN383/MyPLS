@@ -594,4 +594,128 @@ export default class DatabaseHandler {
         return result;
     }
 
+    /**
+     * Lecture Statements
+     */
+
+    async getLectures() {
+        const query = "SELECT * FROM Lecture";
+        const connection = await this.pool.getConnection();
+        const [result] = await connection.query(query);
+        connection.release();
+        return result;
+    }
+
+    async checkLecture(lectureTitle: string) {
+        const query = "SELECT ? FROM Lecture";
+        const connection = await this.pool.getConnection();
+        const [result] = await connection.query(query, [lectureTitle]);
+        connection.release();
+        return result;
+    }
+
+    async createLecture(lectureTitle: string, summary: string, unlockDate: Date, courseID: number) {
+        if(this.checkLecture(lectureTitle)){
+            console.log(`Lecture ${lectureTitle} exists`);
+            return false;
+        }
+        else{
+            const query = "INSERT INTO Lecture (title, summary, UnlockDate, Courses_idCourse) VALUES (?, ?, ?, ?)";
+            const connection = await this.pool.getConnection();
+            const [result] = await connection.query(query,[lectureTitle, summary, unlockDate, courseID]);
+            connection.release();
+            return true;
+        }
+    }
+
+    async updateLecture(lectureTitle: string, summary: string, unlockDate: Date, courseID: number) {
+        if(this.checkLecture(lectureTitle)){
+            const query = "UPDATE Lecture SET (summary = ?, UnlockDate = ?, Courses_idCourse = ?) WHERE title = ?";
+            const connection = await this.pool.getConnection();
+            const [result] = await connection.query(query,[summary, unlockDate, courseID, lectureTitle]);
+            connection.release();
+            return true;
+        }
+        else{
+            console.log(`Lecture ${lectureTitle} does not exist`);
+            return false;
+        }
+    }
+
+    async deleteLecture(lectureTitle: string,) {
+        if(this.checkLecture(lectureTitle)){
+            const query = "DELETE FROM Lecture title = ?";
+            const connection = await this.pool.getConnection();
+            const [result] = await connection.query(query,[lectureTitle]);
+            connection.release();
+            return true;
+        }
+        else{
+            console.log(`Lecture ${lectureTitle} does not exist`);
+            return false;
+        }
+    }
+
+    /**
+     * Quiz Statements
+     */
+
+     async getQuizzes() {
+        const query = "SELECT * FROM Quiz";
+        const connection = await this.pool.getConnection();
+        const [result] = await connection.query(query);
+        connection.release();
+        return result;
+    }
+
+    async checkQuizzes(quizTitle: string) {
+        const query = "SELECT ? FROM Quiz";
+        const connection = await this.pool.getConnection();
+        const [result] = await connection.query(query, [quizTitle]);
+        connection.release();
+        return result;
+    }
+
+    async createQuiz(quizTitle: string, startTime: string, endTime: Date) {
+        if(this.checkLecture(quizTitle)){
+            console.log(`Quiz ${quizTitle} exists`);
+            return false;
+        }
+        else{
+            const query = "INSERT INTO Quiz (Title, StartTime, EndTime) VALUES (?, ?, ?)";
+            const connection = await this.pool.getConnection();
+            const [result] = await connection.query(query,[quizTitle, startTime, endTime]);
+            connection.release();
+            return true;
+        }
+    }
+
+    async updateQuiz(quizTitle: string, startTime: string, endTime: Date) {
+        if(this.checkLecture(quizTitle)){
+            const query = "UPDATE Quiz SET (summary = ?, StartTime = ?, EndTime = ?) WHERE Title = ?";
+            const connection = await this.pool.getConnection();
+            const [result] = await connection.query(query,[startTime, endTime, quizTitle]);
+            connection.release();
+            return true;
+        }
+        else{
+            console.log(`Quiz ${quizTitle} does not exist`);
+            return false;
+        }
+    }
+
+    async deleteQuiz(quizTitle: string,) {
+        if(this.checkLecture(quizTitle)){
+            const query = "DELETE FROM Quiz Title = ?";
+            const connection = await this.pool.getConnection();
+            const [result] = await connection.query(query,[quizTitle]);
+            connection.release();
+            return true;
+        }
+        else{
+            console.log(`Quiz ${quizTitle} does not exist`);
+            return false;
+        }
+    }
+
 }

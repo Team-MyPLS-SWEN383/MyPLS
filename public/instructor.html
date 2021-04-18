@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instructor Layer</title>
+    <link rel="stylesheet" href="css/instructorstyle.css">
+    <script src="instructor.js"></script>
+</head>
+<body>
+    <!-- This is the header section -->
+    <div class="nav">
+    <h1> Welcome to Instructor Layer </h1>
+    </div>
+    <!-- End Of Header Section -->
+    <!-- This is the section that seperate each section -->
+    <div id="myBtnContainer">
+  <button class="btn active" onclick="filterSelection('all')">Show all</button>
+  <button class="btn" onclick="filterSelection('lecture')">lecture</button>
+  <button class="btn" onclick="filterSelection('multimedia')">multimedia</button>
+  <button class="btn" onclick="filterSelection('quiz')">quiz</button>
+
+</div>
+
+<!-- The filterable elements. Note that some have multiple class names (this can be used if they belong to multiple categories) -->
+<div class="container">
+
+  <div class="filterDiv lecture">
+  <div class="card">
+  <img src="media/lecture.png" alt="Available lectures" style="width:100%">
+  <div class="container">
+    <h4><b>CSS Intro</b></h4>
+  </div>
+</div>
+
+</div>
+
+
+  <div class="filterDiv lecture">
+  <div class="card">
+  <img src="media/lecture.png" alt="Available lectures" style="width:100%">
+  <div class="container">
+    <h4><b>Python Intro</b></h4>
+  </div>
+</div>
+
+</div>
+
+
+  <div class="filterDiv multimedia">
+  <div class="card">
+  <img src="media/multimedia.png" alt="Available Multimedia" style="width:100%">
+  <div class="container">
+    <h4><b>CSS PDF</b></h4>
+  </div>
+</div>
+
+</div>
+
+
+  <div class="filterDiv multimedia">
+  <div class="card">
+  <img src="media/multimedia.png" alt="Available Multimedia" style="width:100%">
+  <div class="container">
+    <h4><b>Javascript PDF</b></h4>
+  </div>
+</div>
+
+</div>
+
+<div class="filterDiv quiz">
+  <div class="card">
+  <img src="media/quiz.png" alt="Available quiz" style="width:100%">
+  <div class="container">
+    <h4><b>CSS quiz</b></h4>
+  </div>
+</div>
+
+</div>
+
+<div class="filterDiv quiz">
+  <div class="card">
+  <img src="media/quiz.png" alt="Available quiz" style="width:100%">
+  <div class="container">
+    <h4><b>Python Quiz</b></h4>
+  </div>
+</div>
+
+</div>
+
+
+</div>
+<!-- End of seperation section -->
+
+<!-- Add Lecture button related content -->
+<div id="myBtnContainer" style="text-align: center;">
+<button onclick="document.getElementById('id01').style.display='block'" style="width:auto; margin: 10px auto 10px auto" class="btn">Add Lecture</button>
+
+<div id="id01" class="modal">
+
+  <form class="modal-content animate"  method="post">
+    <div class="imgcontainer">
+      <span onclick="document.getElementById('id01').style.display='none'" class="close" title="Close Modal">&times;</span>
+      <img src="media/lecture.png" alt="Avatar" class="avatar">
+    </div>
+
+    <div class="container">
+    <label for="uname"><b>Lecture Name:</b></label>
+    <input type="text" placeholder="Enter Lecture Name" name="lectureName" required>
+    <br>
+
+    <label for="lectureType" padding><b>Lecture Type</b></label>
+    <select name="role" id="role" required>
+    <option value="USlecture" class="option01"> Open Lecture </option>
+    <option value="Slecture" class="option01"> Scheduled Lecture </option>
+    </select>
+    <p></p>
+    <br>
+    <!-- If possible only show this if the Scheduled Lecture is choosen -->
+    <label for="Year"><b>Year &#160; &#160;</b></label>
+    <input type="text" placeholder="Scheduled Lecture Year ex: 2021" name="SLectureYear" maxlength="4" required>
+
+    <br>
+    <p></p>
+    <label for="Month"><b>Month</b></label>
+    <input type="text" placeholder="Scheduled Lecture Month ex: 09 (for September)" name="SLectureMonth" maxlength="2" required>
+    <br>
+    <p></p>
+    <label for="Day"><b>Day &#160; &#160; </b></label>
+    <input type="text" placeholder="Scheduled Lecture Day ex: 15 (for September 15th)" name="SLectureDay" maxlength="2" required>
+    <br>
+    <p></p>
+    <label for="Hour"><b>Hour &#160; </b></label>
+    <input type="text" placeholder="Scheduled Lecture Hour ex: 5pm or 6am" name="SLectureHour" maxlength="4" required>
+    <br>
+    <p></p>
+    <label for="Minute"><b>Minute</b></label>
+    <input type="text" placeholder="Scheduled Lecture Minute ex: 24 (for 5:24 pm or 6:24 am)" name="SLectureMinute" maxlength="2" required>
+    <br>
+    <p></p>
+    </div>
+    <div class="container" style="text-align: center;">
+      <button type="button" onclick="document.getElementById('id01').style.display='none'" class="cancelbtn btn">Cancel</button>
+      <button type="submit" class="btn" style="margin-left: 5%;background-color: green;">Add</button>
+    </div>
+  </form>
+</div>
+
+
+<!-- This is the end of the Add user Function -->
+
+<!-- This is the Start of Add lecture 00000 These are inside a single div to be next to each other-->
+
+<button onclick="document.getElementById('id02').style.display='block'" style="width:auto; margin: 10px auto 10px auto" class="btn">Add Multimedia</button>
+
+<div id="id02" class="modal">
+
+  <form class="modal-content animate" action="/action_page.php" method="post">
+    <div class="imgcontainer">
+      <span onclick="document.getElementById('id02').style.display='none'" class="close" title="Close Modal">&times;</span>
+      <img src="media/multimedia.png" alt="Avatar" class="avatar">
+    </div>
+
+    <div class="container">
+      <label for="title"><b>Multimedia Title:</b></label>
+      <input type="text" placeholder="Enter Title of the Multimedia" name="title" required>
+    <br>
+    <p></p>
+    <label for="title"><b>Multimedia Link</b></label>
+    <input type="text" placeholder="Enter Link of the Multimedia such as a google drive link" name="title" required>
+  <br>
+  <p></p>
+    </div>
+    <div class="container" style="text-align: center;">
+      <button type="button" onclick="document.getElementById('id02').style.display='none'" class="cancelbtn btn">Cancel</button>
+      <button type="submit" class="btn" style="margin-left: 5%;background-color: green; color: white;">Upload Content</button>
+    </div>
+  </form>
+</div>
+<!-- This is the end of the Add lecture and Discussion Session -->
+
+<!-- This is the Start of Add lecture 00000 These are inside a single div to be next to each other-->
+
+<button onclick="document.getElementById('id02').style.display='block'" style="width:auto; margin: 10px auto 10px auto" class="btn">Add Quiz</button>
+
+<div id="id02" class="modal">
+
+  <form class="modal-content animate" action="/action_page.php" method="post">
+    <div class="imgcontainer">
+      <span onclick="document.getElementById('id02').style.display='none'" class="close" title="Close Modal">&times;</span>
+      <img src="media/quiz.png" alt="Avatar" class="avatar">
+    </div>
+
+    <div class="container">
+      <label for="title"><b>Quiz Title:</b></label>
+      <input type="text" placeholder="Enter Title of the Multimedia" name="title" required>
+    <br>
+    <p></p>
+    <label for="title"><b>Multimedia Link</b></label>
+    <input type="text" placeholder="Enter Link of the Multimedia such as a google drive link" name="title" required>
+  <br>
+  <p></p>
+    </div>
+    <div class="container" style="text-align: center;">
+      <button type="button" onclick="document.getElementById('id02').style.display='none'" class="cancelbtn btn">Cancel</button>
+      <button type="submit" class="btn" style="margin-left: 5%;background-color: green; color: white;">Upload Content</button>
+
+
+    </div>
+  </form>
+</div>
+<!-- This is the end of the Add lecture and Discussion Session -->
+
+<!-- Modify User Information --->
+<button onclick="document.getElementById('id04').style.display='block'" style="width:auto; margin: 10px auto 10px auto" class="btn">Modify Lecture</button>
+
+<div id="id04" class="modal">
+
+  <form class="modal-content animate" method="post">
+    <div class="imgcontainer">
+      <span onclick="document.getElementById('id04').style.display='none'" class="close" title="Close Modal">&times;</span>
+      <img src="media/lecture.png" alt="Avatar" class="avatar">
+    </div>
+
+    <div class="container">
+      <label for="role"><b>Lecture Name:</b></label>
+      <select name="role" id="role" required>
+        <!-- Lecture specific to this instructor -->
+      <option value="lecture" class="option01"> Lecture 1 </option>
+      <option value="lecture" class="option01"> Lecture 2 </option>
+      </select>
+      <br>
+
+      <label for="lectureTitle"><b>Modify Title:</b></label>
+      <input type="text" placeholder="Enter New Title" name="lectureLink" required>
+    <br>
+
+    </div>
+    <div class="container" style="text-align: center;">
+      <button type="button" onclick="document.getElementById('id04').style.display='none'" class="cancelbtn btn">Cancel</button>
+      <button type="submit" class="btn" style="margin-left: 5%;background-color: green;">Modify Lecture</button>
+    </div>
+  </form>
+</div>
+<!-- End of Modify User Information -->
+
+<!-- Modify User Information --->
+<button onclick="document.getElementById('id04').style.display='block'" style="width:auto; margin: 10px auto 10px auto" class="btn">Modify Multimedia</button>
+
+<div id="id04" class="modal">
+
+  <form class="modal-content animate" method="post">
+    <div class="imgcontainer">
+      <span onclick="document.getElementById('id04').style.display='none'" class="close" title="Close Modal">&times;</span>
+      <img src="media/multimedia.png" alt="Avatar" class="avatar">
+    </div>
+
+    <div class="container">
+      <label for="role"><b>Multimedia Name:</b></label>
+      <select name="role" id="role" required>
+        <!-- Lecture specific to this instructor -->
+      <option value="multimedia" class="option01"> Media 1 </option>
+      <option value="multimedia" class="option01"> Media 2 </option>
+      </select>
+      <br>
+
+      <label for="lectureTitle"><b>Modify Title:</b></label>
+      <input type="text" placeholder="Enter New Title" name="mediaTitle">
+    <br>
+    <label for="lectureTitle"><b>Modify Link:</b></label>
+    <input type="text" placeholder="Enter New Link" name="medialink">
+  <br>
+
+    </div>
+    <div class="container" style="text-align: center;">
+      <button type="button" onclick="document.getElementById('id04').style.display='none'" class="cancelbtn btn">Cancel</button>
+      <button type="submit" class="btn" style="margin-left: 5%;background-color: green;">Modify Multimedia</button>
+    </div>
+  </form>
+</div>
+<!-- End of Modify User Information -->
+
+<!-- Modify User Information --->
+<button onclick="document.getElementById('id04').style.display='block'" style="width:auto; margin: 10px auto 10px auto" class="btn">Modify Quiz</button>
+
+<div id="id04" class="modal">
+
+  <form class="modal-content animate" method="post">
+    <div class="imgcontainer">
+      <span onclick="document.getElementById('id04').style.display='none'" class="close" title="Close Modal">&times;</span>
+      <img src="media/multimedia.png" alt="Avatar" class="avatar">
+    </div>
+
+    <div class="container">
+      <label for="role"><b>Multimedia Name:</b></label>
+      <select name="role" id="role" required>
+        <!-- Lecture specific to this instructor -->
+      <option value="multimedia" class="option01"> Media 1 </option>
+      <option value="multimedia" class="option01"> Media 2 </option>
+      </select>
+      <br>
+
+      <label for="lectureTitle"><b>Modify Title:</b></label>
+      <input type="text" placeholder="Enter New Title" name="mediaTitle">
+    <br>
+    <label for="lectureTitle"><b>Modify Link:</b></label>
+    <input type="text" placeholder="Enter New Link" name="medialink">
+  <br>
+
+    </div>
+    <div class="container" style="text-align: center;">
+      <button type="button" onclick="document.getElementById('id04').style.display='none'" class="cancelbtn btn">Cancel</button>
+      <button type="submit" class="btn" style="margin-left: 5%;background-color: green;">Modify Multimedia</button>
+    </div>
+  </form>
+</div>
+<!-- End of Modify User Information -->
+
+
+<!-- This is the section for Delete Button -->
+<button onclick="document.getElementById('id07').style.display='block'" style="width:auto; margin: 10px auto 10px auto" class="btn">Delete</button>
+<div id="id07" class="modal">
+
+  <form class="modal-content animate" action="/action_page.php" method="post">
+    <div class="imgcontainer">
+      <span onclick="document.getElementById('id07').style.display='none'" class="close" title="Close Modal">&times;</span>
+      <img src="media/delete.png" alt="Avatar" class="avatar">
+    </div>
+
+    <div class="container">
+      <label for="role"><b>Delete</b></label>
+      <select name="role" id="role" required>
+      <option value="assignUser" class="option01">Lecture</option>
+      <option value="assignUser" class="option01">Multimedia</option>
+      <option value="assignUser" class="option01">Quiz</option>
+      </select>
+      <p></p>
+      <br>
+
+
+      <label for="role"><b>Select: </b></label>
+      <select name="role" id="role" required>
+      <option value="userorlecture" class="option01"> L or MM or Q 1 </option>
+      <option value="userorlecture" class="option01"> L or MM or Q 2</option>
+      <option value="userorlecture" class="option01"> L or MM or Q 3</option>
+      </select>
+      <p></p>
+      <br>
+    </div>
+    <div class="container" style="text-align: center;">
+      <button type="button" onclick="document.getElementById('id07').style.display='none'" class="cancelbtn btn">Cancel</button>
+      <button type="submit" class="btn" style="margin-left: 5%;background-color: green; color: white;">Delete Confirm</button>
+    </div>
+  </form>
+</div>
+
+</div>
+
+<!-- This is the end of the delete button -->
+</body>
+</html>

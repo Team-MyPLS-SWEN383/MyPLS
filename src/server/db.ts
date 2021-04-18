@@ -621,6 +621,13 @@ export default class DatabaseHandler {
         return result;
     }
 
+    async checkCourse(courseCode: string){
+        const query = "SELECT coursename FROM courses WHERE courseCode = ?";  
+        const connection = await this.pool.getConnection();
+        const [result] = await connection.query(query,[courseCode]);
+        return result;
+    }
+
     async createLecture(lectureTitle: string, summary: string, unlockDate: Date, courseID: number) {
         if(this.checkLecture(lectureTitle)){
             console.log(`Lecture ${lectureTitle} exists`);
@@ -659,6 +666,44 @@ export default class DatabaseHandler {
         }
         else{
             console.log(`Lecture ${lectureTitle} does not exist`);
+            return false;
+        }
+    }
+
+    /**
+     * Gets all lectures from a specific course
+     * @param courseCode course code to get lectures form
+     * @returns  list of lectures present in course
+     */
+    async getCourseLectures(courseCode: string){
+        if(this.checkCourse(courseCode)){
+            const query = "SELECT * FROM lecture L INNER JOIN Courses C ON L.Courses_idCourse = C.idCourse WHERE C.courseCode = ?";
+            const connection = await this.pool.getConnection();
+            const [result] = await connection.query(query,[courseCode]);
+            connection.release();
+            return result;
+        } 
+        else{
+            console.log(`Course ${courseCode} does not exist`);
+            return false;
+        }
+    }
+
+    /**
+     * Gets the content of a specific lecture
+     * @param lectureTitle title of lecture to get content for
+     * @returns content of lecture
+     */
+    async getLectureContent(lectureTitle: string){
+        if(this.checkLecture(lectureTitle)){
+            const query = "SELECT C.ContentLink FROM Content C INNER JOIN Lecture L ON L.idLecture = C.Lecture_idLecture;";
+            const connection = await this.pool.getConnection();
+            const [result] = await connection.query(query,[lectureTitle]);
+            connection.release();
+            return result;
+        }
+        else{
+            console.log(`Error getting content: ${lectureTitle} does not exist`);
             return false;
         }
     }

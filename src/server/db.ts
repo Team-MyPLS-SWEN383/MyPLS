@@ -298,7 +298,7 @@ export default class DatabaseHandler {
             const userId = await this.getUserId(username);
             const query = "INSERT INTO courses (coursename,courseCode,User_idUser) VALUES(?,?,?)";
             const connection = await this.pool.getConnection();
-            const [result] = await connection.query(query, [coursename, courseCode,username]);
+            const [result] = await connection.query(query, [coursename, courseCode, userId]);
             console.log(`inserted new course: ${coursename}`);
             connection.release();
             return true;
@@ -306,6 +306,14 @@ export default class DatabaseHandler {
             console.log("Course already exists!");
             return false;
         }
+    }
+
+    async getCourseId(coursename: string) {
+        const query = "SELECT idCourse from courses WHERE coursename = ?";
+        const connection = await this.pool.getConnection();
+        const [result] = await connection.query(query, [coursename]);
+        connection.release();
+        return result[0]["idCourse"];
     }
 
     /**
@@ -613,12 +621,20 @@ export default class DatabaseHandler {
         return result;
     }
 
-    async checkLecture(lectureTitle: string) {
-        const query = "SELECT ? FROM Lecture";
+    async getLectureId(lecturename: string) {
+        const query = "SELECT idLecture from lecture WHERE title = ?";
         const connection = await this.pool.getConnection();
-        const [result] = await connection.query(query, [lectureTitle]);
+        const [result] = await connection.query(query, [lecturename]);
         connection.release();
-        return result;
+        return result[0]["idLecture"];
+    }
+
+    async checkLecture(lectureTitle: string) {
+        const query = "SELECT title FROM Lecture WHERE title=?";
+        const connection = await this.pool.getConnection();
+        const [result] = await connection.query(query, [lectureTitle]) as any[];
+        connection.release();
+        return result.length > 0;
     }
 
     async checkCourse(courseCode: string){
@@ -628,21 +644,21 @@ export default class DatabaseHandler {
         return result;
     }
 
-    async createLecture(lectureTitle: string, summary: string, unlockDate: Date, courseID: number) {
+    async createLecture(lectureTitle: string, summary: string, unlockDate: string, courseID: number) {
         if(this.checkLecture(lectureTitle)){
-            console.log(`Lecture ${lectureTitle} exists`);
-            return false;
-        }
-        else{
             const query = "INSERT INTO Lecture (title, summary, UnlockDate, Courses_idCourse) VALUES (?, ?, ?, ?)";
             const connection = await this.pool.getConnection();
             const [result] = await connection.query(query,[lectureTitle, summary, unlockDate, courseID]);
             connection.release();
             return true;
         }
+        else{
+            console.log(`Lecture ${lectureTitle} exists`);
+            return false;
+        }
     }
 
-    async updateLecture(lectureTitle: string, summary: string, unlockDate: Date, courseID: number) {
+    async updateLecture(lectureTitle: string, summary: string, unlockDate: string, courseID: number) {
         if(this.checkLecture(lectureTitle)){
             const query = "UPDATE Lecture SET (summary = ?, UnlockDate = ?, Courses_idCourse = ?) WHERE title = ?";
             const connection = await this.pool.getConnection();
@@ -721,28 +737,28 @@ export default class DatabaseHandler {
     }
 
     async checkQuizzes(quizTitle: string) {
-        const query = "SELECT ? FROM Quiz";
+        const query = "SELECT Title FROM Quiz WHERE Title=?";
         const connection = await this.pool.getConnection();
-        const [result] = await connection.query(query, [quizTitle]);
+        const [result] = await connection.query(query, [quizTitle]) as any[];
         connection.release();
-        return result;
+        return result.length > 0;
     }
 
-    async createQuiz(quizTitle: string, startTime: string, endTime: Date) {
-        if(this.checkLecture(quizTitle)){
-            console.log(`Quiz ${quizTitle} exists`);
-            return false;
-        }
-        else{
-            const query = "INSERT INTO Quiz (Title, StartTime, EndTime) VALUES (?, ?, ?)";
+    async createQuiz(quizTitle: string, startTime: string, endTime: string, lectureID: number) {
+        if(this.checkQuizzes(quizTitle)){
+            const query = "INSERT INTO Quiz (Title, StartTime, EndTime, Lecture_idLecture) VALUES (?, ?, ?, ?)";
             const connection = await this.pool.getConnection();
-            const [result] = await connection.query(query,[quizTitle, startTime, endTime]);
+            const [result] = await connection.query(query,[quizTitle, startTime, endTime, lectureID]);
             connection.release();
             return true;
         }
+        else{
+            console.log(`Quiz ${quizTitle} exists`);
+            return false;
+        }
     }
 
-    async updateQuiz(quizTitle: string, startTime: string, endTime: Date) {
+    async updateQuiz(quizTitle: string, startTime: string, endTime: string) {
         if(this.checkLecture(quizTitle)){
             const query = "UPDATE Quiz SET (summary = ?, StartTime = ?, EndTime = ?) WHERE Title = ?";
             const connection = await this.pool.getConnection();

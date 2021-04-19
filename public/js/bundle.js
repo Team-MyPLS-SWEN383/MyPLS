@@ -56,6 +56,18 @@ var Client = (function (exports) {
             method: "GET"
         })).json());
     });
+    let lectureCache;
+    const getLectures = () => __awaiter(void 0, void 0, void 0, function* () {
+        return lectureCache = lectureCache || (yield (yield fetch("/lectures", {
+            method: "GET"
+        })).json());
+    });
+    let quizCache;
+    const getQuizzes = () => __awaiter(void 0, void 0, void 0, function* () {
+        return quizCache = quizCache || (yield (yield fetch("/quizzes", {
+            method: "GET"
+        })).json());
+    });
 
     const inputGenerator = (dbName, label, placeholder, inputType = "text", handler) => {
         return (opts) => {
@@ -136,7 +148,44 @@ var Client = (function (exports) {
         userPicker: userPicker
     });
 
-    var staticComponents = Object.assign(Object.assign(Object.assign(Object.assign({}, courses), discussions), role), users);
+    const groupNameEntry = inputGenerator("Name", "Group Name", "Enter Group Name");
+    const groupDescriptionEntry = inputGenerator("Description", "Group Description", "Enter Group Description");
+    const groupPicker = pickerGenerator("Name", "Select a Group", getGroups);
+
+    var groups = /*#__PURE__*/Object.freeze({
+        __proto__: null,
+        groupNameEntry: groupNameEntry,
+        groupDescriptionEntry: groupDescriptionEntry,
+        groupPicker: groupPicker
+    });
+
+    const lectureTitleEntry = inputGenerator("title", "Input Lecture Title", "Lecture Title");
+    const lectureStartEntry = inputGenerator("UnlockDate", "Input Lecture Unlock Date", "Lecture Unlock Date", "datetime-local");
+    const lectureSummaryEntry = inputGenerator("summary", "Input Lecture Summary", "Lecture Summary");
+    const lecturePicker = pickerGenerator("title", "Select a Lecture", getLectures);
+
+    var lectures = /*#__PURE__*/Object.freeze({
+        __proto__: null,
+        lectureTitleEntry: lectureTitleEntry,
+        lectureStartEntry: lectureStartEntry,
+        lectureSummaryEntry: lectureSummaryEntry,
+        lecturePicker: lecturePicker
+    });
+
+    const quizTitleEntry = inputGenerator("Title", "Quiz Title", "Input Quiz Title");
+    const quizStartTimeEntry = inputGenerator("StartTime", "Quiz Start Time", "Input Quiz Start Time", "datetime-local");
+    const quizEndTimeEntry = inputGenerator("EndTime", "Quiz End Time", "Input Quiz End Time", "datetime-local");
+    const quizPicker = pickerGenerator("Title", "Select A Quiz", getQuizzes);
+
+    var quizzes = /*#__PURE__*/Object.freeze({
+        __proto__: null,
+        quizTitleEntry: quizTitleEntry,
+        quizStartTimeEntry: quizStartTimeEntry,
+        quizEndTimeEntry: quizEndTimeEntry,
+        quizPicker: quizPicker
+    });
+
+    var staticComponents = Object.assign(Object.assign(Object.assign(Object.assign(Object.assign(Object.assign(Object.assign({}, courses), discussions), role), users), groups), lectures), quizzes);
 
     const getUsersOfRole = (targetRole) => __awaiter(void 0, void 0, void 0, function* () {
         const users = yield getUsers();
@@ -209,10 +258,6 @@ var Client = (function (exports) {
         location.reload();
     });
 
-    const groupNameEntry = inputGenerator("Name", "Group Name", "Enter Group Name");
-    const groupDescriptionEntry = inputGenerator("Description", "Group Description", "Enter Group Description");
-    const groupPicker = pickerGenerator("Name", "Select a Group", getGroups);
-
     class CourseOrGroupAddForm {
         constructor(div) {
             this.div = div;
@@ -240,6 +285,7 @@ var Client = (function (exports) {
                     this.optionContainer.innerHTML = `
         ${courseNameEntry()}
         ${courseCodeEntry()}
+        ${usernameEntry()}
       `;
                     changeFormAction(this.div, (form) => { sendFormData("/courses", "POST", form); });
                 }
@@ -457,7 +503,7 @@ var Client = (function (exports) {
             contentArea.appendChild(myCourse);
         }
     });
-    const getContent = () => __awaiter(void 0, void 0, void 0, function* () {
+    const getAdminContent = () => __awaiter(void 0, void 0, void 0, function* () {
         yield appendUsers();
         yield appendCourses();
         yield appendDGroups();
@@ -574,6 +620,55 @@ var Client = (function (exports) {
             location.reload();
         });
     }
+
+    const getLectureData = () => __awaiter(void 0, void 0, void 0, function* () {
+        return (yield (yield fetch("/lectures", {
+            method: "GET"
+        })).json());
+    });
+    const getQuizData = () => __awaiter(void 0, void 0, void 0, function* () {
+        return (yield (yield fetch("/quizzes", {
+            method: "GET"
+        })).json());
+    });
+    const appendLectures = () => __awaiter(void 0, void 0, void 0, function* () {
+        const lectures = yield getLectureData();
+        const contentArea = document.getElementById("content-cards");
+        for (const lecture of lectures) {
+            const myLecture = document.createElement("div");
+            myLecture.className = `filterDiv lecture`;
+            myLecture.innerHTML = `
+    <div class="card">
+      <img src="media/lecture.png" alt="Available Lectures" style="width:100%">
+      <div class="container">
+        <h4><b>${lecture.title}</b></h4>
+      </div>
+    </div>`;
+            contentArea.appendChild(myLecture);
+        }
+    });
+    const appendQuizzes = () => __awaiter(void 0, void 0, void 0, function* () {
+        const quizzes = yield getQuizData();
+        const contentArea = document.getElementById("content-cards");
+        for (const quiz of quizzes) {
+            const myQuiz = document.createElement("div");
+            myQuiz.className = `filterDiv quiz`;
+            myQuiz.innerHTML = `
+    <div class="card">
+      <img src="media/quiz.png" alt="Available Courses" style="width:100%">
+      <div class="container">
+        <h4><b>${quiz.Title}</b></h4>
+      </div>
+    </div>`;
+            contentArea.appendChild(myQuiz);
+        }
+    });
+    const getInstructorContent = () => __awaiter(void 0, void 0, void 0, function* () {
+        yield appendLectures();
+        yield appendQuizzes();
+        filterSelection("all");
+    });
+
     const generateFieldComponents = () => __awaiter(void 0, void 0, void 0, function* () {
         for (const [fnName, generator] of Object.entries(staticComponents)) {
             const divs = document.getElementsByClassName(fnName);
@@ -611,7 +706,8 @@ var Client = (function (exports) {
     exports.deleteHandler = deleteHandler;
     exports.deleteUserCourseToggle = deleteUserCourseToggle;
     exports.generateFieldComponents = generateFieldComponents;
-    exports.getContent = getContent;
+    exports.getAdminContent = getAdminContent;
+    exports.getInstructorContent = getInstructorContent;
     exports.loadCourseDGroupData = loadCourseDGroupData;
     exports.loadInstructorStudentData = loadInstructorStudentData;
 

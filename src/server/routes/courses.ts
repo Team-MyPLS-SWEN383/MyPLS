@@ -4,12 +4,12 @@ import auth from '../helpers/auth';
 
 export const courseRoutes = (app: Express, DB: DatabaseHandler) => {
   app.route("/courses")
-  .get(auth, async (req, res) => {
+  .get(async (req, res) => {
     return res.send(await DB.getCourses()).end();
   })
   .post(auth, async (req, res) => {
-    const { coursename, courseCode } = req.body;
-    await DB.addCourse(coursename, courseCode);
+    const { coursename, courseCode, username } = req.body;
+    await DB.addCourse(coursename, courseCode, username);
     res.status(200);
     res.redirect(".");
   })
@@ -25,3 +25,4 @@ export const courseRoutes = (app: Express, DB: DatabaseHandler) => {
     res.redirect(".");
   })
 }
+

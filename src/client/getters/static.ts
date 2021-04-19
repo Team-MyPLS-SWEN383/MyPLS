@@ -32,3 +32,17 @@ export const getGroups = async () => {
     method: "GET"
   })).json();
 }
+
+let lectureCache;
+export const getLectures = async () => {
+  return lectureCache = lectureCache || await (await fetch("/lectures", {
+    method: "GET"
+  })).json();
+}
+
+let quizCache;
+export const getQuizzes = async () => {
+  return quizCache = quizCache || await (await fetch("/quizzes", {
+    method: "GET"
+  })).json();
+}

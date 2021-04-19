@@ -2,6 +2,7 @@ import { changeFormAction } from "../../helpers/changeFormAction";
 import { sendFormData } from "../../helpers/sendFormData";
 import { courseCodeEntry, courseNameEntry } from "../static/courses";
 import { groupDescriptionEntry, groupNameEntry } from "../static/groups";
+import { usernameEntry } from "../static/users";
 
 class CourseOrGroupAddForm {
   private div: HTMLDivElement;
@@ -33,6 +34,7 @@ class CourseOrGroupAddForm {
       this.optionContainer.innerHTML = `
         ${courseNameEntry()}
         ${courseCodeEntry()}
+        ${usernameEntry()}
       `;
       changeFormAction(this.div, (form) => { sendFormData("/courses", "POST", form); })
     } else {

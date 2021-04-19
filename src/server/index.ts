@@ -4,9 +4,12 @@ import bodyParser from "body-parser";
 import session from "express-session";
 import DatabaseHandler from "./db";
 import roleNameToId from "./helpers/roleNameToId";
-import auth from "./helpers/auth";
+import auth, { profAuth } from "./helpers/auth";
 import { roleRoutes } from "./routes/roles";
 import { courseRoutes } from "./routes/courses";
+import { lectureRoutes } from "./routes/lectures";
+import { contentRoutes } from "./routes/content";
+import { quizRoutes } from "./routes/quizzes";
 
 const DB = new DatabaseHandler();
 
@@ -47,13 +50,17 @@ app.route("/users")
   })
   .patch(auth, async (req, res) => {
     const { oldUsername, username, FirstName, LastName, Roles_idRoles, Email } = req.body;
-    console.log("this is where updateUser method(s) would go");
-    console.log("this may help implement it: https://stackoverflow.com/questions/25683760/how-to-dynamically-generate-mysql-update-statement-based-on-defined-variables-fr");
+    // console.log("this is where updateUser method(s) would go");
+    // console.log("this may help implement it: https://stackoverflow.com/questions/25683760/how-to-dynamically-generate-mysql-update-statement-based-on-defined-variables-fr");
+    if (FirstName?.length) await DB.updateUserFirstName(oldUsername, FirstName)
+    if (LastName?.length) await DB.updateUserLastName(oldUsername, LastName)
+    if (Email?.length) await DB.updateUserEmail(oldUsername, Email)
     res.status(200);
     res.redirect(".");
   })
 
 app.get("/admin", auth)
+app.get("/instructor", profAuth);
 
 app.post("/login", async (req, res) => {
   const { psw, uname } = req.body;
@@ -64,12 +71,17 @@ app.post("/login", async (req, res) => {
         case 1:
           req.session["role"] = "admin";
           res.redirect("/admin");
-          break;
+          return;
+        case 2:
+          req.session["role"] = "instructor";
+          res.redirect("/instructor");
+          return;
         default:
           res.redirect("/index");
       }
     }
   }
+  res.redirect("/login");
 })
 
 app.route("/groups")
@@ -81,7 +93,7 @@ app.route("/groups")
   })
   .delete(auth, async (req, res) => {
     const { Name } = req.body;
-    console.log("this is where the removeDiscussionGroup method would go");
+    await DB.deleteGroup(Name);
     res.redirect(".");
   })
   .get(auth, async (req, res) => {
@@ -89,14 +101,16 @@ app.route("/groups")
   })
   .patch(auth, async (req, res) => {
     const { newGroupName, oldGroupName } = req.body;
-    console.log("this is where the updateGroupName method would go");
-    // await DB.updateGroupName(newGroupName, oldGroupName);
+    await DB.updateGroupName(newGroupName, oldGroupName);
     res.status(200);
     res.redirect(".");
   })
 
 courseRoutes(app, DB);
 roleRoutes(app, DB);
+lectureRoutes(app, DB);
+contentRoutes(app, DB);
+quizRoutes(app, DB);
 
 // app.route("/discussions")
 //   .get(auth, async (req, res) => {

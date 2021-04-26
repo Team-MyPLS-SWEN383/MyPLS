@@ -744,6 +744,14 @@ export default class DatabaseHandler {
         return result.length > 0;
     }
 
+    async getQuizId(quizTitle : string){
+        const query = "SELECT idQuiz FROM quiz WHERE Title  = ?";
+        const connection = await this.pool.getConnection();
+        const [result] = await connection.query(query,[quizTitle]);
+        connection.release();
+        return result[0]['idQuiz'];
+    }
+
     async createQuiz(quizTitle: string, startTime: string, endTime: string, lectureID: number) {
         if(this.checkQuizzes(quizTitle)){
             const query = "INSERT INTO Quiz (Title, StartTime, EndTime, Lecture_idLecture) VALUES (?, ?, ?, ?)";
@@ -772,7 +780,7 @@ export default class DatabaseHandler {
         }
     }
 
-    async deleteQuiz(quizTitle: string,) {
+    async deleteQuiz(quizTitle: string) {
         if(this.checkLecture(quizTitle)){
             const query = "DELETE FROM Quiz Title = ?";
             const connection = await this.pool.getConnection();
@@ -784,6 +792,42 @@ export default class DatabaseHandler {
             console.log(`Quiz ${quizTitle} does not exist`);
             return false;
         }
+    }
+
+    /**
+     * Gets the lists of quiz questions related to a quiz 
+     * @param quizTitle name of quiz to lookup questions for
+     * @returns list of questions from the table with their IDs
+     */
+    async getQuizQuestions(quizTitle : string){
+        if(this.checkQuizzes(quizTitle)){
+            const query = "SELECT U.idQuestions, U.question FROM quiz Q INNER JOIN question U ON U.Quiz_idQuiz = Q.idQuiz WHERE Q.title = ?";
+            const connection = await this.pool.getConnection();
+            const [result] = await connection.query(query,[quizTitle]);
+            connection.release();
+            return result;
+        }
+        else{
+            console.log(`Quiz ${quizTitle} does not exist`);
+            return false;
+        }
+    }
+
+    async createQuizQuestion(question: string, quizName){
+        if(this.checkQuizzes(quizName)){
+            const query = "INSERT INTO question (Question, Quiz_idQuiz) VALUES (?,?)";
+            const quizId = await this.getQuizId(quizName);
+            const connection = await this.pool.getConnection();
+            const [result] = await connection.query(query,[question,quizId]);
+            connection.release();
+            return true;
+        }
+        console.log(`Quiz ${quizName} does not exist`)
+        return false;
+    }
+
+    async createQuestionChoice(textChoice : string, answer: string, question: string){
+        return true;
     }
 
     /**

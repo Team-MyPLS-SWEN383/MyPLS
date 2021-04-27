@@ -737,6 +737,12 @@ export default class DatabaseHandler {
         }
     }
 
+    /**
+     * Create the content that is assigned to a lecture
+     * @param ContentLink link to external content
+     * @param lectureTitle title of lecture to add content to
+     * @returns true on success, false on error
+     */
     async createLectureContent(ContentLink: string, lectureTitle: string){
         if(this.checkLecture(lectureTitle)){
             const query = "INSERT INTO content (ContentLink, Lecture_idLecture) VALUES (?,?)";
@@ -744,7 +750,48 @@ export default class DatabaseHandler {
             const connection = await this.pool.getConnection();
             const [result] = await connection.query(query,[ContentLink,lectureID]);
             connection.release();
-            return result;
+            return true;
+        }
+        else{
+            console.log(`Error getting content: ${lectureTitle} does not exist`);
+            return false;
+        }
+    }
+
+    /**
+     * Update the assigned content to a lecture
+     * @param lectureTitle title of lecture to update content for
+     * @param contentLink new content link
+     * @returns true on success, false on error
+     */
+    async updateLectureContent(lectureTitle: string, contentLink: string){
+        if(this.checkLecture(lectureTitle)){
+            const query = "UPDATE content SET ContentLink = ? WHERE Lecture_idLecture = ?";
+            const lectureID = await this.getLectureId(lectureTitle);
+            const connection = await this.pool.getConnection();
+            const [result] = await connection.query(query,[contentLink,lectureID]);
+            connection.release();
+            return true;
+        }
+        else{
+            console.log(`Error getting content: ${lectureTitle} does not exist`);
+            return false;
+        }
+    }
+
+    /**
+     * deletes the content related to a lecture
+     * @param lectureTitle title of lecture to erase content to
+     * @returns true on success, false on error
+     */
+    async deleteLectureContent(lectureTitle: string){
+        if(this.checkLecture(lectureTitle)){
+            const query = "DELETE FROM content WHERE Lecture_idLecture = ?";
+            const lectureID = await this.getLectureId(lectureTitle);
+            const connection = await this.pool.getConnection();
+            const [result] = await connection.query(query,[lectureID]);
+            connection.release();
+            return true;
         }
         else{
             console.log(`Error getting content: ${lectureTitle} does not exist`);

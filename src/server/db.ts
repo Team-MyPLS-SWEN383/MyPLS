@@ -613,10 +613,27 @@ export default class DatabaseHandler {
      * Lecture Statements
      */
 
+    /**
+     * Get ALL lectures in the database
+     * @returns array of all lectures in database
+     */
     async getLectures() {
         const query = "SELECT * FROM Lecture";
         const connection = await this.pool.getConnection();
         const [result] = await connection.query(query);
+        connection.release();
+        return result;
+    }
+
+    /**
+     * Get all lectures under a course
+     * @param courseName name of course to get lectures for
+     * @returns array of lectures from the database
+     */
+    async getCourseLectures(courseName: string){
+        const query = "SELECT L.idLecture, L.title, L.summary, L.UnlockDate FROM lecture L INNER JOIN courses C ON L.Courses_idCourse = C.idCourse WHERE C.coursename = ?";
+        const connection = await this.pool.getConnection();
+        const [result] = await connection.query(query,[courseName]);
         connection.release();
         return result;
     }
@@ -658,25 +675,21 @@ export default class DatabaseHandler {
         }
     }
 
-    async updateLecture(lectureTitle: string, summary: string, unlockDate: string, courseID: number) {
+    /**
+     * Update lecture in the database
+     * @param currentTitle current title of lecture
+     * @param lectureTitle new title of lecture
+     * @param summary new summary
+     * @param unlockDate new unlock date
+     * @param courseID 
+     * @returns 
+     */
+    async updateLecture(currentTitle: string, lectureTitle: string, summary: string, unlockDate: string, courseID: number) {
         if(this.checkLecture(lectureTitle)){
-            const query = "UPDATE Lecture SET (summary = ?, UnlockDate = ?, Courses_idCourse = ?) WHERE title = ?";
+            const query = "UPDATE Lecture SET title = ?, summary = ?, UnlockDate = ? WHERE idLecture = ?";
+            const lectureID = await this.getLectureId(currentTitle);
             const connection = await this.pool.getConnection();
-            const [result] = await connection.query(query,[summary, unlockDate, courseID, lectureTitle]);
-            connection.release();
-            return true;
-        }
-        else{
-            console.log(`Lecture ${lectureTitle} does not exist`);
-            return false;
-        }
-    }
-
-    async deleteLecture(lectureTitle: string,) {
-        if(this.checkLecture(lectureTitle)){
-            const query = "DELETE FROM Lecture title = ?";
-            const connection = await this.pool.getConnection();
-            const [result] = await connection.query(query,[lectureTitle]);
+            const [result] = await connection.query(query,[summary, unlockDate, lectureTitle,lectureID]);
             connection.release();
             return true;
         }
@@ -687,20 +700,20 @@ export default class DatabaseHandler {
     }
 
     /**
-     * Gets all lectures from a specific course
-     * @param courseCode course code to get lectures form
-     * @returns  list of lectures present in course
+     * Deletes a lecture from the database 
+     * @param lectureTitle title of lecture to be deleted 
+     * @returns true on success, false on error
      */
-    async getCourseLectures(courseCode: string){
-        if(this.checkCourse(courseCode)){
-            const query = "SELECT * FROM lecture L INNER JOIN Courses C ON L.Courses_idCourse = C.idCourse WHERE C.courseCode = ?";
+    async deleteLecture(lectureTitle: string,) {
+        if(this.checkLecture(lectureTitle)){
+            const query = "DELETE FROM Lecture WHERE title = ?";
             const connection = await this.pool.getConnection();
-            const [result] = await connection.query(query,[courseCode]);
+            const [result] = await connection.query(query,[lectureTitle]);
             connection.release();
-            return result;
-        } 
+            return true;
+        }
         else{
-            console.log(`Course ${courseCode} does not exist`);
+            console.log(`Lecture ${lectureTitle} does not exist`);
             return false;
         }
     }
@@ -724,10 +737,29 @@ export default class DatabaseHandler {
         }
     }
 
+    async createLectureContent(ContentLink: string, lectureTitle: string){
+        if(this.checkLecture(lectureTitle)){
+            const query = "INSERT INTO content (ContentLink, Lecture_idLecture) VALUES (?,?)";
+            const lectureID = await this.getLectureId(lectureTitle);
+            const connection = await this.pool.getConnection();
+            const [result] = await connection.query(query,[ContentLink,lectureID]);
+            connection.release();
+            return result;
+        }
+        else{
+            console.log(`Error getting content: ${lectureTitle} does not exist`);
+            return false;
+        }
+    }
+
     /**
      * Quiz Statements
      */
 
+    /**
+     * Gets all quizzes present in the database
+     * @returns array of quizzes
+     */
      async getQuizzes() {
         const query = "SELECT * FROM Quiz";
         const connection = await this.pool.getConnection();
@@ -736,6 +768,11 @@ export default class DatabaseHandler {
         return result;
     }
 
+    /**
+     * Checks if a quiz exists in the database
+     * @param quizTitle title of quiz to search for
+     * @returns return length of results array
+     */
     async checkQuizzes(quizTitle: string) {
         const query = "SELECT Title FROM Quiz WHERE Title=?";
         const connection = await this.pool.getConnection();
@@ -744,6 +781,11 @@ export default class DatabaseHandler {
         return result.length > 0;
     }
 
+    /**
+     * Gets the ID of a quiz
+     * @param quizTitle title of quiz to search for ID
+     * @returns idQuiz value from DB
+     */
     async getQuizId(quizTitle : string){
         const query = "SELECT idQuiz FROM quiz WHERE Title  = ?";
         const connection = await this.pool.getConnection();
@@ -752,6 +794,14 @@ export default class DatabaseHandler {
         return result[0]['idQuiz'];
     }
 
+    /**
+     * Creates a quiz in the database
+     * @param quizTitle name of quiz
+     * @param startTime time to unlock access
+     * @param endTime time to lock access
+     * @param lectureID what lecture this quiz is associated with
+     * @returns true on success, false on error
+     */
     async createQuiz(quizTitle: string, startTime: string, endTime: string, lectureID: number) {
         if(this.checkQuizzes(quizTitle)){
             const query = "INSERT INTO Quiz (Title, StartTime, EndTime, Lecture_idLecture) VALUES (?, ?, ?, ?)";
@@ -766,6 +816,13 @@ export default class DatabaseHandler {
         }
     }
 
+    /**
+     * Updates the specified values of the quiz in the database
+     * @param quizTitle new name for quiz
+     * @param startTime new start time
+     * @param endTime new end time
+     * @returns true on success, false on error
+     */
     async updateQuiz(quizTitle: string, startTime: string, endTime: string) {
         if(this.checkLecture(quizTitle)){
             const query = "UPDATE Quiz SET (summary = ?, StartTime = ?, EndTime = ?) WHERE Title = ?";
@@ -780,9 +837,14 @@ export default class DatabaseHandler {
         }
     }
 
+    /**
+     * Deletes a quiz from the database
+     * @param quizTitle name of quiz to be deleted
+     * @returns true on success, false on error
+     */
     async deleteQuiz(quizTitle: string) {
         if(this.checkLecture(quizTitle)){
-            const query = "DELETE FROM Quiz Title = ?";
+            const query = "DELETE FROM Quiz WHERE Title = ?";
             const connection = await this.pool.getConnection();
             const [result] = await connection.query(query,[quizTitle]);
             connection.release();
@@ -813,6 +875,12 @@ export default class DatabaseHandler {
         }
     }
 
+    /**
+     * Create a question for a specified quiz
+     * @param question question text
+     * @param quizName name of quiz to place question in
+     * @returns true if successful, false if quiz does not exist
+     */
     async createQuizQuestion(question: string, quizName){
         if(this.checkQuizzes(quizName)){
             const query = "INSERT INTO question (Question, Quiz_idQuiz) VALUES (?,?)";
@@ -826,30 +894,33 @@ export default class DatabaseHandler {
         return false;
     }
 
-    async createQuestionChoice(textChoice : string, answer: string, question: string){
-        return true;
+    /**
+     * Gets ID of specific question
+     * @param question text of question to get ID for
+     * @returns idQuestion value from database
+     */
+    async getQuestionID(question : string){
+        const query = "SELECT idQuestions FROM question WHERE Question = ?";
+        const connection = await this.pool.getConnection();
+        const [result] = await connection.query(query,[question]);
+        connection.release();
+        return result[0]['idQuestions'];
     }
 
     /**
-     * Student - See professor ratings
-     * @param instructor
+     * Inserts a choice for a question
+     * @param text of question to be displayed to user
+     * @param answer value to denote if right answer or not (0 - no | 1- yes)
+     * @param question question to add choice to
+     * @returns true when finished
      */
-
-    async getInstructorID(instructor: string) {
-        const query = "SELECT * FROM User WHERE Roles_idRoles = 2 AND FirstName = ? OR LastName = ?";
+    async createQuestionChoice(text: string, answer: number, question: string){
+        const query = "INSERT INTO quizchoice (Text, Answer, Questions_idQuestions) VALUES (?,?,?)";
+        const questionID = await this.getQuestionID(question);
         const connection = await this.pool.getConnection();
-        const [result] = await connection.query(query, [instructor, instructor]);
+        const [result] = await connection.query(query,[text,answer,questionID]);
         connection.release();
-        return result;
-    }
-
-     async getRating(instructor: string) {
-        var profID = this.getInstructorID(instructor);
-        const query = "SELECT * FROM Ratings WHERE User_idUser = ?";
-        const connection = await this.pool.getConnection();
-        const [result] = await connection.query(query, [profID]);
-        connection.release();
-        return result;
+        return true;
     }
 
 }
